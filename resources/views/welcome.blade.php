@@ -364,7 +364,7 @@
               <div class="space-y-2">
                 <div class="flex items-center gap-3 text-13">
                   <x-ionicon-logo-facebook class="size-3.5" />
-                  <a href="https://www.instagram.com/oiza_apparel/" target="_blank" rel="noopener noreferrer" class="opacity-75 hover:underline">Facebook</a>
+                  <a href="https://www.facebook.com/oiza.awomokun" target="_blank" rel="noopener noreferrer" class="opacity-75 hover:underline">Facebook</a>
                 </div>
 
 
