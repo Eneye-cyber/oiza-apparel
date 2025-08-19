@@ -17,7 +17,7 @@
       <div class="flex flex-col justify-center gap-6">
         <div class="">
           <h5 class=" tracking-[6px] font-medium text-gold text-sm mb-2">CONTACT US</h5>
-          <h1 class="font-playfair-display text-4xl md:text-5xl font-medium text-black">Get in Touch</h1>
+          <h1 class="section-title-text md:text-5xl font-medium text-black">Get in Touch</h1>
           <p class="text-base text-black opacity-80 mt-4 lg:max-w-xl text-justify">
             Have a question or need assistance? We're here to help with your fabric and apparel needs. Reach out via the form below or our contact details.
             <br>
@@ -32,12 +32,12 @@
         <form action="{{ route('contact.submit') }}" method="POST" class="space-y-6">
           @csrf
           <div>
-            <label for="name" class="font-dm-sans text-sm font-semibold text-black">Name</label>
+            <label for="name" class="text-sm font-semibold text-black">Name</label>
             <input
               type="text"
               id="name"
               name="name"
-              class="mt-2 w-full border border-black rounded-md py-3 px-4 font-dm-sans text-black focus:outline-none focus:border-[#555]"
+              class="mt-2 w-full border border-black rounded-md py-3 px-4 text-black focus:outline-none focus:border-[#555]"
               placeholder="Your Name"
               required
               aria-describedby="name-error">
@@ -46,12 +46,12 @@
             @enderror
           </div>
           <div>
-            <label for="email" class="font-dm-sans text-sm font-semibold text-black">Email</label>
+            <label for="email" class="text-sm font-semibold text-black">Email</label>
             <input
               type="email"
               id="email"
               name="email"
-              class="mt-2 w-full border border-black rounded-md py-3 px-4 font-dm-sans text-black focus:outline-none focus:border-[#555]"
+              class="mt-2 w-full border border-black rounded-md py-3 px-4 text-black focus:outline-none focus:border-[#555]"
               placeholder="Your Email"
               required
               aria-describedby="email-error">
@@ -60,12 +60,12 @@
             @enderror
           </div>
           <div>
-            <label for="message" class="font-dm-sans text-sm font-semibold text-black">Message</label>
+            <label for="message" class="text-sm font-semibold text-black">Message</label>
             <textarea
               id="message"
               name="message"
               rows="3"
-              class="mt-2 w-full border border-black rounded-md py-3 px-4 font-dm-sans text-black focus:outline-none focus:border-[#555]"
+              class="mt-2 w-full border border-black rounded-md py-3 px-4 text-black focus:outline-none focus:border-[#555]"
               placeholder="Your Message"
               required
               aria-describedby="message-error"></textarea>
@@ -75,7 +75,7 @@
           </div>
           <button
             type="submit"
-            class="cursor-pointer border border-black bg-black text-white hover:border-[#555] hover:bg-black hover:text-white font-dm-sans font-medium text-sm tracking-wider py-4 px-10 transition-all duration-300 w-full">
+            class="btn-solid uppercase">
             Send Message
           </button>
         </form>
@@ -87,23 +87,23 @@
 <section>
   <div class="container py-14 md:py-16">
     <div class="text-center">
-      <h3 class="font-playfair-display text-3xl md:text-4xl">Contact Information</h3>
+      <h3 class="section-title-text">Contact Information</h3>
     </div>
     <div class="py-12 grid md:grid-cols-3 gap-3">
       <div class="flex items-center gap-3">
         <x-heroicon-o-phone class="size-5 lg:size-8 text-black" aria-hidden="true" />
         <div>
-          <p class="font-dm-sans text-sm font-semibold text-black">Phone</p>
-          <a href="tel:(+123)4567890" class="font-dm-sans text-black hover:text-[#555] hover:underline">
+          <p class="text-sm font-semibold text-black">Phone</p>
+          <a href="tel:(+123)4567890" class="text-black hover:text-[#555] hover:underline">
             (+123) 456-7890
           </a>
         </div>
       </div>
-      <div class="flex justify-center items-center max-md:border-y max-md:py-2  md:border-x border-black/15 gap-3">
+      <div class="flex flex-center max-md:border-y max-md:py-2  md:border-x border-black/15 gap-3">
         <x-heroicon-o-envelope class="size-5 lg:size-8 text-black" aria-hidden="true" />
         <div>
-          <p class="font-dm-sans text-sm font-semibold text-black">Email</p>
-          <a href="mailto:alaoeneye@gmail.com" class="font-dm-sans text-black hover:text-[#555] hover:underline">
+          <p class="text-sm font-semibold text-black">Email</p>
+          <a href="mailto:alaoeneye@gmail.com" class="text-black hover:text-[#555] hover:underline">
             alaoeneye@gmail.com
           </a>
         </div>
@@ -111,8 +111,8 @@
       <div class="flex justify-end items-center gap-3">
         <x-heroicon-o-clock class="size-5 lg:size-8 text-black" aria-hidden="true" />
         <div>
-          <p class="font-dm-sans text-sm font-semibold text-black">Hours</p>
-          <p class="font-dm-sans text-black opacity-80">Mon-Fri: 9:00 AM - 6:00 PM</p>
+          <p class="text-sm font-semibold text-black">Hours</p>
+          <p class="text-black opacity-80">Mon-Fri: 9:00 AM - 6:00 PM</p>
         </div>
       </div>
 
@@ -123,7 +123,7 @@
 <section class="pb-20">
   <div class="container py-16 border-y border-black/35 space-y-6">
     <div class="text-center">
-      <h3 class="font-playfair-display text-3xl md:text-4xl">Let's Get in Touch!</h3>
+      <h3 class="section-title-text">Let's Get in Touch!</h3>
     </div>
 
     <div class="flex flex-center gap-4 mt-2">
@@ -142,7 +142,7 @@
   <div class="container py-20">
     <div class="flex flex-col gap-16">
       <div class="text-center">
-        <h3 class="font-playfair-display text-4xl">Frequently Asked Questions</h3>
+        <h3 class="section-title-text">Frequently Asked Questions</h3>
       </div>
 
       <div class="grid md:grid-cols-2 gap-4">

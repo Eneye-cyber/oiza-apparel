@@ -11,7 +11,7 @@
         <h1 class="text-[120px] leading-[0.9] font-playfair-display mt-5 mb-2.5">Oiza Apparels</h1>
         <p class="text-[#222] text-base">Choose from a collection of high quality fabrics that suit your style</p>
         <a
-          href="#"
+          href="{{Route::has('shop') ? route('shop') : '/not-found'}}"
           class="box-border aspect-auto object-cover border border-black flex-none w-auto py-4 px-10 no-underline block relative overflow-hidden">
           <span class="font-medium text-sm tracking-wider">SHOP NOW</span>
         </a>
@@ -42,7 +42,7 @@
           </div>
           <a href="/" class="flex justify-center items-center gap-3">
             <h5 class="font-medium">View Full Collection</h5>
-            <x-heroicon-c-arrow-right class="h-3.5 w-auto" />
+            <x-heroicon-c-arrow-right class="h-3.5 w-auto text-primary" />
           </a>
         </div>
 
@@ -58,7 +58,7 @@
   <div class="container">
     <div class="grid md:grid-cols-3 gap-3">
       <figure class="flex items-center gap-2.5">
-        <x-ionicon-diamond-outline class="size-8 stoke-1" />
+        <x-ionicon-diamond-outline class="size-8 text-primary stoke-1" />
         <figcaption class="text-sm">
           <p class="font-semibold">Certified</p>
           <span class="opacity-75">Certified of authencity</span>
@@ -66,7 +66,7 @@
       </figure>
 
       <figure class="flex justify-center items-center gap-2.5 border-x border-black/30">
-        <x-heroicon-o-lock-closed class="size-8" />
+        <x-heroicon-o-lock-closed class="size-8 text-primary" />
         <figcaption class="text-sm">
           <p class="font-semibold">Secure</p>
           <span class="opacity-75">Certified marketplace</span>
@@ -74,7 +74,7 @@
       </figure>
 
       <figure class="flex justify-end items-center gap-2.5">
-        <x-heroicon-o-truck class="size-8 stroke-1" />
+        <x-heroicon-o-truck class="size-8 text-primary stroke-1" />
         <figcaption class="text-sm">
           <p class="font-semibold">Shipping</p>
           <span class="opacity-75">Fast and reliable delivery</span>
@@ -88,7 +88,7 @@
 <article class="py-8">
   <div class="container">
     <div class="flex justify-between items-baseline flex-wrap">
-      <h3 class="font-playfair-display text-4xl">New Arrivals</h3>
+      <h3 class="section-title-text">New Arrivals</h3>
       <a href="/" class="flex justify-center items-center gap-3 hover:text-primary">
         <h5 class="font-medium">View Full Collection</h5>
         <x-heroicon-c-arrow-right class="h-3.5 w-auto" />
@@ -100,7 +100,7 @@
       <div role="listitem" class="product-list-item">
         <a href="#" class="block w-full group">
           <div class="flex flex-col gap-4">
-            <div class="flex items-center justify-center h-[360px] w-full transition-all duration-300 border border-slate-200 2xl:border-[#fafafa] group-hover:border-amber-100 group-hover:text-primary overflow-hidden">
+            <div class="flex items-center justify-center h-[360px] w-full transition-all duration-300 border border-slate-200 2xl:border-[#fafafa] group-hover:border-primary group-hover:text-primary overflow-hidden">
               <img src="{{ $product['image'] }}" loading="lazy" alt="Ankara" class="object-contain w-10/12 h-auto transition-all duration-300 group-hover:scale-110 group-hover:rotate-6 ">
             </div>
 
@@ -130,7 +130,7 @@
 <article class="py-8">
   <div class="container">
     <div class="text-center">
-      <h3 class="font-playfair-display text-4xl">Featured Collection</h3>
+      <h3 class="section-title-text">Featured Collection</h3>
     </div>
 
     <section class="grid sm:grid-cols-2 md:grid-cols-3 gap-8 py-14">
@@ -138,7 +138,7 @@
       <div role="listitem" class="product-list-item">
         <a href="#" class="block w-full group">
           <div class="flex flex-col gap-4">
-            <div class="flex items-center justify-center h-[360px] w-full transition-all duration-300 border border-slate-200 2xl:border-[#fafafa] group-hover:border-amber-100 group-hover:text-primary overflow-hidden">
+            <div class="flex items-center justify-center h-[360px] w-full transition-all duration-300 border border-slate-200 2xl:border-[#fafafa] group-hover:border-primary group-hover:text-primary overflow-hidden">
               <img src="{{ $product['image'] }}" loading="lazy" alt="Ankara" class="object-contain w-10/12 h-auto transition-all duration-300 group-hover:scale-110 group-hover:rotate-6 ">
             </div>
 
@@ -175,14 +175,14 @@
   <div class="container py-20">
     <div class="flex flex-col gap-16">
       <div class="text-center">
-        <h3 class="font-playfair-display text-4xl">Frequently Asked Questions</h3>
+        <h3 class="section-title-text">Frequently Asked Questions</h3>
       </div>
 
       <div class="grid md:grid-cols-2 gap-4">
         @foreach($faq as $item)
-        <details class="group transition-all duration-300 bg-cream border border-gold [&::-webkit-details-marker]:hidden open:bg-white">
+        <details class="group transition-all duration-300 bg-cream border border-primary [&::-webkit-details-marker]:hidden open:bg-white">
           <summary class="p-4 flex items-center gap-4 text-lg font-semibold text-black cursor-pointer hover:bg-gray-50 group-open:hover:bg-white [&::-webkit-details-marker]:hidden">
-            <x-heroicon-o-plus class="size-4 stroke-3 text-gold" />
+            <x-heroicon-o-plus class="size-4 stroke-3 text-primary" />
             {{ $item['question'] }}
           </summary>
           <div class="p-4 text-black opacity-80 border-t border-white">
@@ -207,10 +207,10 @@
     </div>
 
     <a href="https://www.instagram.com/oiza_apparel/" target="_blank" rel="noopener noreferrer"
-      class="opacity-0 group-hover:opacity-100 transition-opacity duration-300 text-black font-semibold gap-2.5 bg-white shadow-[0_20px_160px_100px_white] shadow-cream border border-black w-auto py-6 px-9 flex flex-center absolute top-1/2 left-1/2 -translate-1/2 overflow-hidden">
+      class="opacity-0 group-hover:opacity-100 transition-opacity duration-300 text-black font-semibold gap-2.5 bg-white shadow-[0_20px_160px_100px_white] shadow-cream border border-primary w-auto py-6 px-9 flex flex-center absolute top-1/2 left-1/2 -translate-1/2 overflow-hidden">
       <x-ionicon-logo-instagram class="size-5" />
 
-      <span class="text-lg font-normal mb-1">@oiza_apparel</span>
+      <span class="text-lg font-normal mb-1 text-primary">@oiza_apparel</span>
     </a>
   </div>
 </section>

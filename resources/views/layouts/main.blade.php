@@ -5,6 +5,7 @@
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <meta name="description" content="@yield('description', 'Discover high-quality fabrics and stylish apparels at Oiza Apparels.')">
+  <meta name="keywords" content="@yield('keywords', 'Ankara, fabrics, lace, Mens fabrics, children wears')">
   <meta name="robots" content="index,follow">
 
   <!-- Open Graph Tags -->
@@ -54,7 +55,7 @@
     <div class="container max-md:px-3">
       <div class="flex justify-between items-center pb-2 border-b text-xs border-b-[#2222221a]">
         <div class="flex items-center gap-2">
-          <x-heroicon-o-phone class="size-4" aria-hidden="true" />
+          <x-heroicon-o-phone class="size-5 text-gold" aria-hidden="true" />
           <a href="tel:(+123)4567890" class="font-dm-sans text-black opacity-75 hover:opacity-100">( +123 ) 456 7890</a>
         </div>
         <div>
@@ -71,7 +72,7 @@
           </h2>
 
           <nav class="hidden md:flex items-center uppercase font-medium" aria-label="Main navigation">
-            <a href="#" class="p-5 inline-block hover:text-[#555]">New Arrivals</a>
+            <a href="{{ Route::has('shop') ? route('shop') : '#'}}" class="p-5 inline-block hover:text-[#555]">New Arrivals</a>
             <div class="relative" aria-haspopup="true" aria-expanded="false">
               <div class="p-5 cursor-pointer" role="button" aria-label="Fabrics menu">
                 <div class="flex items-center gap-1.5">
@@ -103,7 +104,7 @@
 
           <div class="w-auto">
             <a href="{{ route('cart') }}" aria-label="View shopping cart">
-              <x-heroicon-o-shopping-bag class="size-5" aria-hidden="true" />
+              <x-heroicon-o-shopping-bag class="size-5 text-gold" aria-hidden="true" />
             </a>
           </div>
         </div>
@@ -111,7 +112,7 @@
     </div>
   </header>
 
-  <main class="font-dm-sans">
+  <main class="font-dm-sans min-h-80">
     @yield('content')
   </main>
 
@@ -125,12 +126,12 @@
                 OIZA
               </a>
             </h2>
-            <div class="separator my-4 mr-4"></div>
+            <div class="separator my-4 mr-4 !bg-primary opacity-100"></div>
             <p class="text-black hover:text-[#555]">Choose us for high-quality fabrics, secure checkout, flexible payment options, instant order confirmation, and prompt delivery to your door</p>
           </div>
           <div class="px-4 sm:px-0 grid lg:grid-cols-2 gap-y-6">
             <div>
-              <h5 class="uppercase pb-2 font-semibold text-balance">Here to help</h5>
+              <h5 class="uppercase pb-2 font-semibold text-balance text-primary">Here to help</h5>
               <p class="mb-4 text-sm text-black hover:text-[#555]">
                 Have a question? You may find an answer in our<span>&nbsp;</span>
                 <a href="#faq" class="underline hover:text-[#555]">FAQs</a>.
@@ -153,7 +154,7 @@
               </div>
             </div>
             <div class="lg:px-6">
-              <h5 class="uppercase pb-2 font-semibold text-balance">Follow Us</h5>
+              <h5 class="uppercase pb-2 font-semibold text-balance text-primary">Follow Us</h5>
               <div class="space-y-2">
                 <div class="flex items-center gap-3 text-13">
                   <x-ionicon-logo-facebook class="size-3.5" aria-hidden="true" />

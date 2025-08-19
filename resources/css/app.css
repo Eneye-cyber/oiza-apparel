@@ -24,6 +24,7 @@
     --color-black: var(--acme-black);
     --color-light-gray: var(--acme-light-gray);
     --color-gold: var(--acme-gold);
+    --color-primary: var(--acme-gold);
     --color-whitesmoke: var(--acme-whitesmoke);
 }
 
@@ -43,8 +44,17 @@
     .text-13 {
         @apply text-[13px];
     }
+
+    .section-title-text {
+        @apply font-playfair-display text-3xl md:text-4xl;
+    }
+
     .flex-center {
         @apply justify-center items-center;
+    }
+
+    .flex-between {
+        @apply justify-between items-center;
     }
 }
 @layer components {
@@ -57,5 +67,8 @@
     }
     .separator {
         @apply w-full h-[1px] bg-black opacity-20;
+    }
+    .btn-solid {
+        @apply cursor-pointer border border-black bg-black text-white hover:border-[#555] hover:bg-black hover:text-white font-medium text-sm tracking-wider py-4 px-10 transition-all duration-300 w-full
     }
 }
