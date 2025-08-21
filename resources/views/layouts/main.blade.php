@@ -51,66 +51,7 @@
 </head>
 
 <body class="bg-white text-black">
-  <header class="w-full pt-5 pb-2.5 font-dm-sans">
-    <div class="container max-md:px-3">
-      <div class="flex justify-between items-center pb-2 border-b text-xs border-b-[#2222221a]">
-        <div class="flex items-center gap-2">
-          <x-heroicon-o-phone class="size-5 text-gold" aria-hidden="true" />
-          <a href="tel:(+123)4567890" class="font-dm-sans text-black opacity-75 hover:opacity-100">( +123 ) 456 7890</a>
-        </div>
-        <div>
-          <a href="{{ route('contact') }}" class="text-black opacity-75 hover:opacity-100">Customer Support</a>
-        </div>
-      </div>
-
-      <section class="pt-2">
-        <div class="flex justify-between items-center">
-          <h2>
-            <a href="/" class="font-playfair-display text-3xl font-medium" aria-label="Oiza Apparels Home">
-              OIZA
-            </a>
-          </h2>
-
-          <nav class="hidden md:flex items-center uppercase font-medium" aria-label="Main navigation">
-            <a href="{{ Route::has('shop') ? route('shop') : '#'}}" class="p-5 inline-block hover:text-[#555]">New Arrivals</a>
-            <div class="relative" aria-haspopup="true" aria-expanded="false">
-              <div class="p-5 cursor-pointer" role="button" aria-label="Fabrics menu">
-                <div class="flex items-center gap-1.5">
-                  <span>Fabrics</span>
-                  <x-heroicon-c-chevron-down class="h-4 w-auto" aria-hidden="true" />
-                </div>
-              </div>
-              <!-- Dropdown content can be added here -->
-            </div>
-            <div class="relative" aria-haspopup="true" aria-expanded="false">
-              <div class="p-5 cursor-pointer" role="button" aria-label="Ready to wear menu">
-                <div class="flex items-center gap-1.5">
-                  <span>Ready to wear</span>
-                  <x-heroicon-c-chevron-down class="h-4 w-auto" aria-hidden="true" />
-                </div>
-              </div>
-              <!-- Dropdown content can be added here -->
-            </div>
-            <div class="relative" aria-haspopup="true" aria-expanded="false">
-              <div class="p-5 cursor-pointer" role="button" aria-label="Accessories menu">
-                <div class="flex items-center gap-1.5">
-                  <span>Accessories</span>
-                  <x-heroicon-c-chevron-down class="h-4 w-auto" aria-hidden="true" />
-                </div>
-              </div>
-              <!-- Dropdown content can be added here -->
-            </div>
-          </nav>
-
-          <div class="w-auto">
-            <a href="{{ route('cart') }}" aria-label="View shopping cart">
-              <x-heroicon-o-shopping-bag class="size-5 text-gold" aria-hidden="true" />
-            </a>
-          </div>
-        </div>
-      </section>
-    </div>
-  </header>
+  <x-header />
 
   <main class="font-dm-sans min-h-80">
     @yield('content')
