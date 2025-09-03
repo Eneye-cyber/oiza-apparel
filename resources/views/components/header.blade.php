@@ -1,6 +1,6 @@
 <header class="w-full pt-5 pb-2.5 font-dm-sans bg-white relative">
   <div class="container max-md:px-3 mx-auto">
-    <div class="flex justify-between items-center pb-2 border-b text-xs border-b-[#2222221a]">
+    <div class="hidden md:flex justify-between items-center pb-2 border-b text-xs border-b-[#2222221a]" data-aos="fade-down">
       <div class="flex items-center gap-2">
         <x-heroicon-o-phone class="size-5 text-gold" aria-hidden="true" />
         <a href="tel:(+123)4567890" class="font-dm-sans text-black opacity-75 hover:opacity-100">( +123 ) 456
@@ -13,29 +13,26 @@
 
     <section class="pt-2">
       <div class="flex justify-between items-center">
-        <h2>
+        <h2 data-aos="fade-down" data-aos-delay="100">
           <a href="/" class="font-playfair-display text-3xl font-medium"
               aria-label="Oiza Apparels Home">
               OIZA
           </a>
         </h2>
 
-        <!-- Mobile Menu Toggle -->
-        <button class="md:hidden text-black focus:outline-none" id="mobile-menu-toggle"
-            aria-label="Toggle navigation menu" aria-expanded="false">
-            <x-heroicon-o-bars-3-bottom-right class="size-6" aria-hidden="true" />
-        </button>
+        
 
         <!-- Main Navigation -->
         <nav class="hidden md:flex items-center uppercase font-medium space-x-2" aria-label="Main navigation"
             id="main-nav">
             <a href="{{ Route::has('shop') ? route('shop') : '#' }}"
-                class="p-5 inline-block hover:text-[#555] transition-colors duration-200">New Arrivals</a>
+                class="p-5 inline-block hover:text-[#555] transition-colors duration-200"
+                 data-aos="fade-down" data-aos-delay="100">New Arrivals</a>
             @foreach ($categories as $category)
                 <div class="group" aria-haspopup="true" aria-expanded="false">
                     <div class="p-5 cursor-pointer flex items-center gap-1.5 hover:text-[#555] transition-colors duration-200"
-                        role="button" aria-label="{{ $category['name'] }} menu">
-                        <span>{{ $category['name'] }}</span>
+                        role="button" aria-label="{{ $category['name'] }} menu"  data-aos="fade-down" data-aos-delay="100">
+                        <a  href="{{ route('shop.category', ['slug' => $category['slug']]) }}">{{ $category['name'] }}</a>
                         <x-heroicon-c-chevron-down
                             class="h-4 w-auto transition-transform duration-200 group-hover:rotate-180"
                             aria-hidden="true" />
@@ -46,23 +43,23 @@
                             <div class="container grid grid-cols-12 max-h-80 gap-6">
                               <div class="col-span-3 w-full max-h-72 grid grid-cols-2 grid-rows-2 gap-4 relative">
                                 <div class="object-contain overflow-clip">
-                                  <img src="{{ $category['image'] ?? asset('img/african_print.webp') }}" alt="{{ $category['name'] }}"
+                                  <img src="{{ $category['image'] ?? asset('img/african_print.webp') }}" loading="lazy" alt="{{ $category['name'] }}"
                                       class="h-full w-full object-cover rounded-lg ">
                                 </div>
                                 
                                 <div class="object-contain overflow-clip">
-                                  <img src="{{ $category['image'] ?? asset('img/kid_ai.jpg') }}" alt="{{ $category['name'] }}"
+                                  <img src="{{ $category['image'] ?? asset('img/kid_ai.jpg') }}" loading="lazy" alt="{{ $category['name'] }}"
                                       class="h-full w-full object-cover rounded-lg ">
                                 </div>
 
 
                                 <div class="object-contain overflow-clip">
-                                  <img src="{{ $category['image'] ?? asset('img/shirt.jpg') }}" alt="{{ $category['name'] }}"
+                                  <img src="{{ $category['image'] ?? asset('img/shirt.jpg') }}" loading="lazy" alt="{{ $category['name'] }}"
                                       class="h-full w-full object-cover rounded-lg ">
                                 </div>
 
                                 <div class="object-contain overflow-clip">
-                                  <img src="{{ $category['image'] ?? 'https://i.pinimg.com/736x/00/d0/df/00d0df8c402029ef699cb334cb5e97ef.jpg' }}" alt="{{ $category['name'] }}"
+                                  <img src="{{ $category['image'] ?? 'https://i.pinimg.com/736x/00/d0/df/00d0df8c402029ef699cb334cb5e97ef.jpg' }}" loading="lazy" alt="{{ $category['name'] }}"
                                       class="h-full w-full object-cover rounded-lg ">
                                 </div>
                               </div>
@@ -107,11 +104,20 @@
             @endforeach
         </nav>
 
-        <div class="w-auto">
-            <a href="{{ route('cart') }}" aria-label="View shopping cart">
+        <div class="w-auto flex flex-center gap-3">
+            <button class="inline-block cursor-pointer relative" onclick="openCart()" aria-label="View shopping cart"  data-aos="fade-down" data-aos-delay="100">
                 <x-heroicon-o-shopping-bag class="size-5 text-gold" aria-hidden="true" />
-            </a>
+                <span
+                    class="absolute -top-1.5 -right-1.5 bg-primary rounded-full h-3 w-3  flex-center hidden animate-pulse"
+                    id="cart-count"></span>
+            </button>
+            <!-- Mobile Menu Toggle -->
+            <button class="md:hidden text-black focus:outline-none" id="mobile-menu-toggle"
+                aria-label="Toggle navigation menu" aria-expanded="false">
+                <x-heroicon-o-bars-3-bottom-right class="size-6" aria-hidden="true" />
+            </button>
         </div>
+        
       </div>
     </section>
   </div>

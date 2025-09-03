@@ -68,7 +68,43 @@
     .separator {
         @apply w-full h-[1px] bg-black opacity-20;
     }
+
+    .btn {
+        @apply box-border aspect-auto object-cover border border-black flex-none w-auto py-4 px-10 no-underline relative overflow-hidden;
+    }
     .btn-solid {
-        @apply cursor-pointer border border-black bg-black text-white hover:border-[#555] hover:bg-black hover:text-white font-medium text-sm tracking-wider py-4 px-10 transition-all duration-300 w-full
+        @apply cursor-pointer border border-black bg-black text-white hover:border-[#555] hover:bg-black hover:text-white font-medium text-sm tracking-wider py-4 px-10 transition-all duration-300 w-full;
+    }
+
+    .cart#cart-overlay {
+        @apply invisible opacity-0;
+    }
+    .cart#cart-overlay > #cart-container {
+        @apply translate-x-full;
+    }
+
+    .cart.is-visible#cart-overlay {
+        @apply visible opacity-100;
+    }
+
+    .cart.is-visible#cart-overlay > #cart-container {
+        @apply translate-x-0;
+    }
+
+    /* Base nav link style */
+    .side-nav-link {
+        @apply transition-all duration-200 uppercase block text-center max-md:py-2.5
+         md:text-left md:text-black md:bg-white md:hover:text-gold 
+         max-md:hover:bg-black max-md:hover:text-white hover:opacity-100;
+    }
+
+    /* Active state */
+    .side-nav-link-active {
+        @apply max-md:bg-black max-md:text-white md:pl-3 md:border-l-[3px] md:border-gold font-medium;
+    }
+
+    /* Inactive state */
+    .side-nav-link-inactive {
+        @apply bg-white opacity-80;
     }
 }

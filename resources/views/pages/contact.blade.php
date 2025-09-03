@@ -139,25 +139,36 @@
 <!-- FAQ  -->
 
 <section class="bg-cream">
-  <div class="container py-20">
+  <div class="container py-20" id="faq">
     <div class="flex flex-col gap-16">
       <div class="text-center">
         <h3 class="section-title-text">Frequently Asked Questions</h3>
       </div>
 
       <div class="grid md:grid-cols-2 gap-4">
-        @foreach($faq as $item)
-        <details class="group transition-all duration-300 bg-cream border border-gold [&::-webkit-details-marker]:hidden open:bg-white">
-          <summary class="p-4 flex items-center gap-4 text-lg font-semibold text-black cursor-pointer hover:bg-gray-50 group-open:hover:bg-white [&::-webkit-details-marker]:hidden">
-            <x-heroicon-o-plus class="size-4 stroke-3 text-gold" />
-            {{ $item['question'] }}
-          </summary>
-          <div class="p-4 text-black opacity-80 border-t border-white">
-            {{ $item['answer'] }}
+        @forelse($faq as $item)
+          <details class="group transition-all duration-300 bg-cream border border-gold [&::-webkit-details-marker]:hidden open:bg-white">
+            <summary class="p-4 flex items-center gap-4 text-lg font-semibold text-black cursor-pointer hover:bg-gray-50 group-open:hover:bg-white [&::-webkit-details-marker]:hidden">
+              <x-heroicon-o-plus class="size-4 stroke-3 text-gold" />
+              {{ $item->question }}
+            </summary>
+            <div class="p-4 text-black opacity-80 border-t border-white">
+              {{ $item->answer }}
+            </div>
+          </details>
+        @empty
+          <div class="col-span-1 md:col-span-2 text-center py-12">
+            <div class="bg-cream border border-gold rounded-lg p-8 max-w-2xl mx-auto">
+              <h4 class="text-xl font-semibold text-black mb-2">No FAQs Available</h4>
+              <p class="text-black opacity-80">
+                We currently don’t have any frequently asked questions to display. Please check back later or contact us for assistance.
+              </p>
+              <a href="mailto:sample@mail.com.ng" class="mt-4 inline-block text-gold hover:text-yellow-600 font-semibold underline">
+                Contact Support
+              </a>
+            </div>
           </div>
-        </details>
-        @endforeach
-
+        @endforelse
       </div>
     </div>
   </div>

@@ -1,151 +1,314 @@
 @extends('layouts.main')
 
-@section('title', $page_title)
+@section('title', $meta['title'])
+@section('description', $meta['description'])
+@section('keywords', $meta['keywords'])
+@section('og_title', $meta['title'])
+@section('og_description', $meta['description'])
+@section('og_image', $category->image ? asset('storage/' . $category->image) :
+    asset('/favicon/android-chrome-192x192.png'))
+
 
 @section('content')
-<article class="pb-12">
-  <div class="bg-gold py-5 text-white">
-    <div class="container">
-      <dl class="flex gap-2.5">
-        <a href="/" class="inline-block pr-2.5 border-r border-cream text-sm opacity-75 hover:opacity-100">Home</a>
-        <a href="/shop" class="inline-block pr-2.5 border-r border-cream text-sm opacity-75 hover:opacity-100">Products</a>
-        <a href="/shop" class="inline-block pr-2.5 text-sm font-semibold">{{$category['name']}}</a>
-        <!-- <a href="" class="inline-block pr-2.5  text-sm font-semibold">Latest arrival</a> -->
-        <!-- <a href="" class="inline-block pr-2.5  text-sm font-semibold">Latest arrival</a> -->
-      </dl>
-    </div>
-  </div>
-  <div class="container py-12">
-    
-    <section class="flex flex-col flex-between">
-      <div class="flex items-start flex-wrap w-full">
-        <!-- Aside sidebar -->
-        <aside class="w-full md:w-1/5 md:sticky md:top-14 md:flex flex-col items-start gap-3.5 md:gap-1 mb-5 md:mb-10 md:pr-6 !bg-scroll">
-          
-          
-          <div class="grid grid-cols-2 sm:grid-cols-3 md:flex flex-col md:gap-4 w-full">
-            <a href="{{ url('/shop/' . Str::slug($category['name'])) }}" class="transition-all duration-200 uppercase font-medium block text-center max-md:py-2.5 bg-black text-white  md:text-left md:text-black md:pl-3 md:bg-white md:border-l-[3px] md:border-gold md:hover:text-gold max-md:hover:bg-black max-md:hover:text-white hover:opacity-100">
-              {{ $category['name'] }}
-            </a>
+    <article class="pb-12">
+        <div class="bg-gold py-5 text-white">
+            <div class="container">
+                <nav aria-label="breadcrumb">
+                    <ol itemscope itemtype="https://schema.org/BreadcrumbList" class="flex gap-2.5">
 
-            <!-- Subcategories (indented, slightly smaller on mobile) -->
-            @if(!empty($category['subcategories']))
-            @foreach($category['subcategories'] as $subcategory)
-            <a href="{{ url('/shop/' . Str::slug($category['name']) . '/' . Str::slug($subcategory['name'])) }}" 
-              class="uppercase bg-white block opacity-80 text-center max-md:py-2.5 md:text-left md:border-gold md:hover:text-gold md:hover:font-medium md:hover:border-l-[3px] md:hover:pl-3 max-md:hover:bg-black max-md:hover:text-white hover:opacity-100">
-              {{ $subcategory['name'] }}
-            </a>
-            @endforeach
-            @endif
-          </div>
+                        {{-- Home --}}
+                        <li itemprop="itemListElement" itemscope itemtype="https://schema.org/ListItem">
+                            <a itemprop="item" href="/"
+                                class="inline-block pr-2.5 border-r border-cream text-sm opacity-75 hover:opacity-100">
+                                <span itemprop="name">Home</span>
+                            </a>
+                            <meta itemprop="position" content="1" />
+                        </li>
 
-          <div class="separator my-6"></div>
+                        {{-- Products --}}
+                        <li itemprop="itemListElement" itemscope itemtype="https://schema.org/ListItem">
+                            <a itemprop="item" href="/shop"
+                                class="inline-block pr-2.5 border-r border-cream text-sm opacity-75 hover:opacity-100">
+                                <span itemprop="name">Products</span>
+                            </a>
+                            <meta itemprop="position" content="2" />
+                        </li>
 
-          <div class="flex flex-col gap-6 my-4">
-            <!-- Filters and Sort By Controls -->
-            <!-- Filter: Color Dropdown -->
-            <div class="flex items-center md:items-start md:flex-col gap-2.5">
-              <label for="color-filter" class="mr-2 text-sm font-semibold opacity-80">Color:</label>
-              <select id="color-filter" class="w-full bg-white border border-slate-200 py-2 px-3 text-sm rounded hover:bg-black hover:text-white transition">
-                <option value="">All</option>
-                <option value="red">Red</option>
-                <option value="blue">Blue</option>
-                <option value="green">Green</option>
-                <option value="black">Black</option>
-              </select>
+                        {{-- Dynamic Breadcrumbs --}}
+                        @foreach ($breadcrumbs as $index => $breadcrumb)
+                            <li itemprop="itemListElement" itemscope itemtype="https://schema.org/ListItem">
+                                <a itemprop="item" href="{{ url('/shop/' . $breadcrumb['slug']) }}"
+                                    class="inline-block pr-2.5 text-sm {{ $index < count($breadcrumbs) - 1 ? 'border-r border-cream opacity-75 hover:opacity-100' : 'font-semibold' }}">
+                                    <span itemprop="name">{{ $breadcrumb['name'] }}</span>
+                                </a>
+                                <meta itemprop="position" content="{{ $index + 3 }}" />
+                            </li>
+                        @endforeach
+                    </ol>
+                </nav>
+
             </div>
-
-            <!-- Filter: Price Range -->
-            <div class="flex items-center md:items-start md:flex-col gap-2.5">
-              <label class="text-sm font-semibold opacity-80">Price:</label>
-              <div class="flex flex-between gap-2">
-                <input type="number" placeholder="Min" class="w-20 bg-white border border-slate-200 py-2 px-3 text-sm rounded hover:border-amber-100 transition">
-                <span class="text-sm opacity-80">-</span>
-                <input type="number" placeholder="Max" class="w-20 bg-white border border-slate-200 py-2 px-3 text-sm rounded hover:border-amber-100 transition">
-              </div>
-              <button class="w-full mt-2 bg-black text-white py-2 px-4 text-sm rounded hover:bg-amber-100 hover:text-black transition">Apply</button>
-            </div>
-
-          </div>
-          
-        </aside>
-
-        <!-- listings  -->
-        <div class="w-full md:w-4/5 !bg-scroll">
-          <div class="text-left">
-            <h2 class="text-6xl leading-[0.9] font-playfair-display capitalize">{{$page_title}}</h2>
-            <p class="my-4 opacity-80">Whether casual or formal, find the perfect jewelry for every occasion with us.</p>
-          </div>
-
-          <div class="separator my-6"></div>
-
-          <div class="flex flex-col gap-3 mb-4">
-            <!-- Sort By Dropdown (aligned to right on larger screens) -->
-            <div class="ml-auto flex items-center">
-              <label for="sort-by" class="mr-2 text-sm font-semibold opacity-80">Sort by:</label>
-              <select id="sort-by" class="bg-white border border-slate-200 py-2 px-3 text-sm rounded hover:bg-black hover:text-white transition">
-                <option value="default">Default</option>
-                <option value="price-asc">Price: Low to High</option>
-                <option value="price-desc">Price: High to Low</option>
-                <option value="name-asc">Name: A-Z</option>
-                <option value="name-desc">Name: Z-A</option>
-              </select>
-            </div>
-          </div>
-          <div class="grid grid-cols-2 md:grid-cols-3 gap-6 py-2">
-            @foreach($products as $product)
-            <div role="listitem" class="product-list-item">
-              <a href="{{ url('/shop/' . 'category'. '/' . 'product-slug') }}" class="block w-full group">
-                <div class="flex flex-col gap-4">
-                  <div class="flex items-center justify-center h-60 md:h-[360px] w-full transition-all duration-300 border border-slate-200 2xl:border-[#fafafa] group-hover:border-amber-100 group-hover:text-primary overflow-hidden">
-                    <img src="{{ $product['image'] }}" loading="lazy" alt="Ankara" class="object-contain w-10/12 h-auto transition-all duration-300 group-hover:scale-110 group-hover:rotate-6 ">
-                  </div>
-
-                  <div class="text-center px-1.5">
-                    <h4 class="text-lg font-semibold">{{ $product['name'] }}</h4>
-                    <p class="opacity-80">$ {{ $product['price'] }} USD</p>
-                  </div>
-                </div>
-              </a>
-            </div>
-            @endforeach
-          </div>
-
-          
-
-          <!-- Pagination -->
-          <!-- ($products->hasPages()) -->
-          @if($products->count() > 20)
-          <div class="flex justify-center items-center gap-2 mt-8">
-            <!-- Previous Button -->
-            <a href="{{ $products->previousPageUrl() }}" class="py-2 px-3 text-sm border border-slate-200 rounded hover:bg-black hover:text-white transition {{ $products->onFirstPage() ? 'opacity-50 cursor-not-allowed' : '' }}">
-              Prev
-            </a>
-
-            <!-- Page Numbers -->
-            @foreach($products->getUrlRange(1, $products->lastPage()) as $page => $url)
-            <a href="{{ $url }}" class="py-2 px-3 text-sm border border-slate-200 rounded {{ $products->currentPage() == $page ? 'bg-black text-white' : 'bg-white hover:bg-black hover:text-white transition' }}">
-              {{ $page }}
-            </a>
-            @endforeach
-
-            <!-- Next Button -->
-            <a href="{{ $products->nextPageUrl() }}" class="py-2 px-3 text-sm border border-slate-200 rounded hover:bg-black hover:text-white transition {{ $products->hasMorePages() ? '' : 'opacity-50 cursor-not-allowed' }}">
-              Next
-            </a>
-          </div>
-          @endif
         </div>
+        <div class="container py-12">
 
-      </div>
-    </section>
-  </div>
-  <!-- Promotional banner  -->
-  <div class="container py-16">
-    <!-- https://www.freepik.com/premium-photo/decorative-pattern-fabric-thai-traditional-style-fabric_22163297.htm#fromView=search&page=1&position=35&uuid=d46d82ac-4ff4-4acf-9f0c-ff7b6255c90a&query=ankara+print -->
-    <div class="h-96 py-16 relative flex flex-center bg-center bg-[url('https://img.freepik.com/premium-photo/decorative-pattern-fabric-thai-traditional-style-fabric_483511-2148.jpg?w=1480')]">
-      <div class="gradient-element"></div>
-    </div>
-  </div>
-</article>
+            <section class="flex flex-col flex-between">
+                <div class="flex items-start flex-wrap w-full">
+                    <!-- Aside sidebar -->
+                    <aside
+                        class="w-full md:w-1/5 md:sticky md:top-14 md:flex flex-col items-start gap-3.5 md:gap-1 mb-5 md:mb-10 md:pr-6 !bg-scroll">
+
+
+                        <div class="grid grid-cols-2 sm:grid-cols-3 md:flex flex-col md:gap-4 w-full">
+                            <a href="{{ url('/shop/' . $sidebarCategories['parent']['full_slug_path']) }}"
+                                class="side-nav-link {{ request()->route('slug') === $sidebarCategories['parent']['full_slug_path']
+                                    ? 'side-nav-link-active'
+                                    : 'side-nav-link-inactive' }}">
+                                {{ $sidebarCategories['parent']['name'] }}
+                            </a>
+
+                            <!-- Subcategories (indented, slightly smaller on mobile) -->
+                            @if (!empty($sidebarCategories['children']))
+                                @foreach ($sidebarCategories['children'] as $subcategory)
+                                    <a href="{{ url('/shop/' . $subcategory['full_slug_path']) }}"
+                                        class="side-nav-link {{ request()->route('slug') === $subcategory['full_slug_path']
+                                            ? 'side-nav-link-active'
+                                            : 'side-nav-link-inactive' }}">
+                                        {{ $subcategory['name'] }}
+                                    </a>
+                                @endforeach
+                            @endif
+                        </div>
+
+                        <div class="separator my-6"></div>
+
+                        <form id="filter-form" action="" method="GET" class="flex flex-col gap-6 my-4">
+                            @if (request()->has('subcategory'))
+                                <input type="hidden" name="subcategory" value="{{ request()->get('subcategory') }}">
+                            @endif
+                            <!-- Filters and Sort By Controls -->
+                            <!-- Filter: Color Dropdown -->
+                            <div class="flex items-center md:items-start md:flex-col gap-2.5">
+                                <label for="color-filter" class="mr-2 text-sm font-semibold opacity-80">Color:</label>
+                                <select id="color" name="color"
+                                    class="bg-white border border-slate-200 py-2 px-3 text-sm rounded hover:bg-black hover:text-white transition">
+                                    <option value="" {{ request()->get('color') == '' ? 'selected' : '' }}>All
+                                    </option>
+                                    <option value="red" {{ request()->get('color') == 'red' ? 'selected' : '' }}>Red
+                                    </option>
+                                    <option value="blue" {{ request()->get('color') == 'blue' ? 'selected' : '' }}>Blue
+                                    </option>
+                                    <option value="green" {{ request()->get('color') == 'green' ? 'selected' : '' }}>Green
+                                    </option>
+                                    <option value="black" {{ request()->get('color') == 'black' ? 'selected' : '' }}>Black
+                                    </option>
+                                </select>
+                            </div>
+
+                            <!-- Filter: Price Range -->
+                            <div class="flex items-center md:items-start md:flex-col gap-2.5">
+                                <label class="text-sm font-semibold opacity-80">Price:</label>
+                                <div class="flex flex-between gap-2">
+                                    <input type="number" placeholder="Min" name="min_price"
+                                        value="{{ request()->get('min_price') }}"
+                                        class="w-20 bg-white border border-slate-200 py-2 px-3 text-sm rounded hover:border-amber-100 transition">
+                                    <span class="text-sm opacity-80">-</span>
+                                    <input type="number" name="max_price" value="{{ request()->get('max_price') }}"
+                                        placeholder="Max"
+                                        class="w-20 bg-white border border-slate-200 py-2 px-3 text-sm rounded hover:border-amber-100 transition">
+                                </div>
+                                <button type="submit"
+                                    class="w-full mt-2 bg-black text-white py-2 px-4 text-sm rounded hover:bg-amber-100 hover:text-black transition">Apply</button>
+                            </div>
+
+                        </form>
+
+                    </aside>
+
+                    <!-- listings  -->
+                    <div class="w-full md:w-4/5 !bg-scroll">
+                        <div class="text-left">
+                            <h2 class="text-6xl leading-[0.9] font-playfair-display capitalize">{{ $category['name'] }}
+                            </h2>
+                            <p class="mt-2.5 opacity-80">
+                                {{ $category->description ?? 'Whether casual or formal, find the perfect jewelry for every occasion with us.' }}
+                            </p>
+
+                            <div class="flex flex-wrap gap-3 mt-3">
+                                @forelse ($category->children as $child)
+                                    <span
+                                        class="px-4 py-1.5 border border-slate-200 rounded-full text-sm hover:bg-slate-800 hover:text-white focus:outline-none focus:ring-2 focus:ring-slate-400 focus:ring-opacity-50 cursor-pointer transition duration-200">
+                                        <a href="{{ url('/shop/' . $child->full_slug_path) }}">{{ $child->name }}</a>
+                                    </span>
+                                @empty
+                                @endforelse
+                            </div>
+                        </div>
+
+                        <div class="separator my-6 mt-4"></div>
+
+                        <div class="flex flex-col gap-3 mb-4">
+                            <!-- Sort By Dropdown (aligned to right on larger screens) -->
+                            <div class="ml-auto flex items-center gap-4">
+                                <label for="sort" class="mr-2 text-sm font-semibold opacity-80">Sort by:</label>
+                                <select id="sort" name="sort"
+                                    class="bg-white border border-slate-200 py-2 px-3 text-sm rounded hover:bg-black hover:text-white transition">
+                                    <option value="" {{ request()->get('sort') == '' ? 'selected' : '' }}>Latest
+                                    </option>
+                                    <option value="oldest" {{ request()->get('sort') == 'oldest' ? 'selected' : '' }}>
+                                        Oldest</option>
+                                    <option value="price-asc"
+                                        {{ request()->get('sort') == 'price-asc' ? 'selected' : '' }}>Price: Low to High
+                                    </option>
+                                    <option value="price-desc"
+                                        {{ request()->get('sort') == 'price-desc' ? 'selected' : '' }}>Price: High to Low
+                                    </option>
+                                    {{-- <option value="name-asc" {{ request()->get('sort') == 'name-asc' ? 'selected' : '' }}>Name: A-Z</option> --}}
+                                    {{-- <option value="name-desc" {{ request()->get('sort') == 'name-desc' ? 'selected' : '' }}>Name: Z-A</option> --}}
+                                </select>
+                                @if (request()->hasAny(['color', 'min_price', 'max_price', 'sort']))
+                                    <button id="reset-filters" type="button"
+                                        class="ml-auto text-sm p-2 border border-slate-300 opacity-80 hover:opacity-100 focus:outline-none focus:ring-2 focus:ring-slate-400 focus:ring-opacity-50 cursor-pointer transition duration-200">
+                                        Clear Filters
+                                    </button>
+                                @endif
+                            </div>
+
+                        </div>
+                        @if ($products->isEmpty())
+                            <div class="col-span-1 sm:col-span-2 md:col-span-3 lg:col-span-4 text-center py-12">
+                                <div class="bg-white border border-slate-200 rounded-lg p-8 max-w-2xl mx-auto">
+                                    <h4 class="text-xl font-semibold text-black mb-2">No Products Found</h4>
+                                    <p class="text-black text-sm opacity-80 mb-4">
+                                        It looks like no products match your current filters. Try adjusting your filters or
+                                        browse all available products.
+                                    </p>
+                                    <a href="{{ route('shop') }}"
+                                        class="inline-block py-2 px-4 text-sm font-semibold text-black border border-slate-200 rounded hover:bg-black hover:text-white transition">
+                                        Browse All Products
+                                    </a>
+                                </div>
+                            </div>
+                        @else
+                            <div role="list" id="products-listing"
+                                class="product-list grid sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6 py-2">
+                                @foreach ($products as $product)
+                                    <x-product-card :product="$product" :href="route('shop.product', ['product' => $product->slug])" />
+                                @endforeach
+                            </div>
+
+                            @if ($products->hasPages())
+                                <div class="flex justify-center items-center gap-2 mt-8">
+                                    <a href="{{ $products->appends(request()->query())->previousPageUrl() }}"
+                                        class="py-2 px-3 text-sm border border-slate-200 rounded hover:bg-black hover:text-white transition {{ $products->onFirstPage() ? 'opacity-50 cursor-not-allowed' : '' }} mr-auto">
+                                        Prev
+                                    </a>
+
+                                    @foreach ($products->getUrlRange(1, $products->lastPage()) as $page => $url)
+                                        <a href="{{ $url . (request()->query() ? '&' . http_build_query(request()->query()) : '') }}"
+                                            class="py-2 px-3 text-sm border border-slate-200 rounded {{ $products->currentPage() == $page ? 'bg-black text-white' : 'bg-white hover:bg-black hover:text-white transition' }}">
+                                            {{ $page }}
+                                        </a>
+                                    @endforeach
+
+                                    <a href="{{ $products->appends(request()->query())->nextPageUrl() }}"
+                                        class="py-2 px-3 text-sm border border-slate-200 rounded hover:bg-black hover:text-white transition {{ $products->hasMorePages() ? '' : 'opacity-50 cursor-not-allowed' }} ml-auto">
+                                        Next
+                                    </a>
+                                </div>
+                            @endif
+                        @endif
+
+
+
+                        <!-- Pagination -->
+                        <!-- ($products->hasPages()) -->
+                        @if ($products->count() > 20)
+                            <div class="flex justify-center items-center gap-2 mt-8">
+                                <!-- Previous Button -->
+                                <a href="{{ $products->previousPageUrl() }}"
+                                    class="py-2 px-3 text-sm border border-slate-200 rounded hover:bg-black hover:text-white transition {{ $products->onFirstPage() ? 'opacity-50 cursor-not-allowed' : '' }}">
+                                    Prev
+                                </a>
+
+                                <!-- Page Numbers -->
+                                @foreach ($products->getUrlRange(1, $products->lastPage()) as $page => $url)
+                                    <a href="{{ $url }}"
+                                        class="py-2 px-3 text-sm border border-slate-200 rounded {{ $products->currentPage() == $page ? 'bg-black text-white' : 'bg-white hover:bg-black hover:text-white transition' }}">
+                                        {{ $page }}
+                                    </a>
+                                @endforeach
+
+                                <!-- Next Button -->
+                                <a href="{{ $products->nextPageUrl() }}"
+                                    class="py-2 px-3 text-sm border border-slate-200 rounded hover:bg-black hover:text-white transition {{ $products->hasMorePages() ? '' : 'opacity-50 cursor-not-allowed' }}">
+                                    Next
+                                </a>
+                            </div>
+                        @endif
+                    </div>
+
+                </div>
+            </section>
+        </div>
+        <!-- Promotional banner  -->
+        <div class="container py-16">
+            <!-- https://www.freepik.com/premium-photo/decorative-pattern-fabric-thai-traditional-style-fabric_22163297.htm#fromView=search&page=1&position=35&uuid=d46d82ac-4ff4-4acf-9f0c-ff7b6255c90a&query=ankara+print -->
+            <div class="h-96 py-16 relative flex flex-center bg-center bg-no-repeat"
+                style="background-image: url('{{ asset('img/decorative-bg.jpg') }}');">
+                <div class="gradient-element"></div>
+            </div>
+        </div>
+    </article>
+@endsection
+
+@section('scripts')
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const form = document.getElementById('filter-form');
+            const sortSelect = document.getElementById('sort');
+            const colorSelect = document.getElementById('color');
+            const resetButton = document.getElementById('reset-filters');
+            const minPriceInput = document.querySelector('input[name="min_price"]');
+            const maxPriceInput = document.querySelector('input[name="max_price"]');
+
+            // Auto-submit form when sort select value changes
+            sortSelect.addEventListener('change', () => {
+                form.submit();
+            });
+
+            // Auto-submit form when color select value changes
+            colorSelect.addEventListener('change', () => {
+                form.submit();
+            });
+
+            // Handle reset filters button
+            resetButton?.addEventListener('click', () => {
+                // Clear form inputs
+                colorSelect.value = '';
+                sortSelect.value = '';
+                minPriceInput.value = '';
+                maxPriceInput.value = '';
+                // Navigate to current page without any query parameters
+                window.location.href = window.location.pathname;
+            });
+
+            // Handle category links to maintain other query parameters
+            // document.querySelectorAll('aside a').forEach(link => {
+            //     link.addEventListener('click', function(e) {
+            //         e.preventDefault();
+            //         const url = new URL(this.href);
+            //         const params = new URLSearchParams(window.location.search);
+
+            //         // Preserve existing query parameters except category
+            //         params.delete('category');
+            //         params.delete('subcategory');
+            //         url.searchParams.forEach((value, key) => {
+            //             params.set(key, value);
+            //         });
+
+            //         window.location.href = `/shop?${params.toString()}`;
+            //     });
+            // });
+        });
+    </script>
 @endsection
