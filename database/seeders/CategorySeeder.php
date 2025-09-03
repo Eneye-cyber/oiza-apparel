@@ -4,8 +4,9 @@ namespace Database\Seeders;
 
 use Illuminate\Database\Seeder;
 use App\Models\Category;
+use Carbon\Carbon;
 
-class CategoriesTableSeeder extends Seeder
+class CategorySeeder extends Seeder
 {
     /**
      * Run the database seeds.
@@ -152,6 +153,7 @@ class CategoriesTableSeeder extends Seeder
             'description' => $categoryData['description'] ?? null,
             'is_active' => $categoryData['is_active'] ?? true,
             'order' => $categoryData['order'] ?? 0,
+            'created_at' => Carbon::now()->subDays(10),
         ]);
 
         // Create subcategories if they exist
