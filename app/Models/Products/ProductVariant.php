@@ -2,6 +2,7 @@
 
 namespace App\Models\Products;
 
+use App\Models\Attribute;
 use Database\Factories\ProductVariantFactory;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
@@ -36,6 +37,15 @@ class ProductVariant extends Model
     public function product(): BelongsTo
     {
         return $this->belongsTo(Product::class);
+    }
+
+    // 🔗 Many-to-Many with attributes
+    public function attributes()
+    {
+        return $this->belongsToMany(Attribute::class, 'attribute_variant')
+            ->withPivot(['quantity', 'price'])
+            ->using(\App\Models\Pivots\AttributeVariant::class)
+            ->withTimestamps();
     }
 
 }

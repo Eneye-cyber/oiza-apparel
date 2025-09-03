@@ -252,7 +252,7 @@
     <!-- Promotional banner  -->
     <div class="container py-16">
       <!-- https://www.freepik.com/premium-photo/decorative-pattern-fabric-thai-traditional-style-fabric_22163297.htm#fromView=search&page=1&position=35&uuid=d46d82ac-4ff4-4acf-9f0c-ff7b6255c90a&query=ankara+print -->
-      <div class="h-96 py-16 relative flex flex-center bg-center bg-[url('https://img.freepik.com/premium-photo/decorative-pattern-fabric-thai-traditional-style-fabric_483511-2148.jpg?w=1480')]">
+      <div class="h-96 py-16 relative flex flex-center bg-center bg-no-repeat" style="background-image: url('{{ asset('img/decorative-bg.jpg') }}');">
         <div class="gradient-element"></div>
       </div>
     </div>

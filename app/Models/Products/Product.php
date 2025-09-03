@@ -2,6 +2,7 @@
 
 namespace App\Models\Products;
 
+use App\Models\Attribute;
 use App\Models\Category;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
@@ -61,5 +62,11 @@ class Product extends Model
         return $this->hasMany(ProductVariant::class);
     }
 
-
+    public function attributes()
+    {
+        return $this->belongsToMany(Attribute::class, 'attribute_product')
+            ->withPivot(['quantity', 'price'])
+            ->using(\App\Models\Pivots\AttributeProduct::class)
+            ->withTimestamps();
+    }
 }
