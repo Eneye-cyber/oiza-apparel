@@ -1,21 +1,19 @@
 #!/usr/bin/env bash
-set -e
-
 echo "Running composer"
-composer install --no-dev --working-dir=/var/www/html --prefer-dist --optimize-autoloader
-
-echo "Installing Node dependencies"
-cd /var/www/html
-npm ci --omit=dev   # faster and clean install
-
-echo "Building frontend assets"
-npm run build
+composer global require hirak/prestissimo
+composer install --no-dev --working-dir=/var/www/html
 
 echo "Creating symbolic storage link..."
-php artisan storage:link || true
+php artisan storage:link
 
-echo "Resetting and running migrations..."
-php artisan migrate:fresh --seed --force   # Wipes, migrates, and seeds in one
+echo "Running migrations..."
+php artisan db:wipe --force
+
+echo "Running migrations..."
+php artisan migrate --force
+
+echo "Running seeders..."
+php artisan db:seed  --force
 
 echo "Caching config"
 php artisan config:cache
@@ -29,4 +27,4 @@ php artisan view:cache
 echo "Caching event"
 php artisan event:cache
 
-echo "✅ Deployment complete!"
+
