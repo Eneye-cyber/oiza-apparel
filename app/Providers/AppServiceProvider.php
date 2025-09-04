@@ -5,7 +5,12 @@ namespace App\Providers;
 use App\Models\Category;
 use App\Observers\CategoryObserver;
 use App\Services\CategoryService;
+use App\View\Components\CartDrawer;
+use App\View\Components\Header;
+use App\View\Components\Submenu;
 use Illuminate\Support\ServiceProvider;
+use Illuminate\Support\Facades\URL;
+use Illuminate\Support\Facades\Blade;
 
 class AppServiceProvider extends ServiceProvider
 {
@@ -37,5 +42,13 @@ class AppServiceProvider extends ServiceProvider
     {
         //
         Category::observe(CategoryObserver::class);
+        if ($this->app->environment('production')) {
+            URL::forceScheme('https');
+
+            Blade::component('header', Header::class);
+            Blade::component('submenu', Submenu::class);
+            Blade::component('cart-drawer', CartDrawer::class);
+        }
+
     }
 }
