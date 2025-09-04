@@ -1,7 +1,18 @@
+
+
 FROM richarvey/nginx-php-fpm:latest
+
+WORKDIR /var/www/html
 
 # Copy application files
 COPY . .
+
+RUN curl -sL https://deb.nodesource.com/setup_18.x | bash - 
+&& apt-get install -y nodejs 
+&& npm install -g pnpm 
+&& pnpm install
+
+RUN pnpm run build
 
 # Image config/Environment setup
 ENV SKIP_COMPOSER 1
@@ -17,5 +28,7 @@ ENV LOG_CHANNEL stderr
 
 # Allow composer to run as root
 ENV COMPOSER_ALLOW_SUPERUSER 1
+
+EXPOSE 80
 
 CMD ["/start.sh"]
