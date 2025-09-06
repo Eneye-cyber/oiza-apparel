@@ -3,7 +3,6 @@
 namespace App\Models\Products;
 
 use App\Models\Attribute;
-use Database\Factories\ProductVariantFactory;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
@@ -25,13 +24,6 @@ class ProductVariant extends Model
         'stock_quantity',
     ];
 
-    /**
-     * Create a new factory instance for the model.
-     */
-    protected static function newFactory()
-    {
-        return ProductVariantFactory::new();
-    }
 
 
     public function product(): BelongsTo
