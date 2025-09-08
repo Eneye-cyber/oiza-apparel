@@ -21,7 +21,7 @@ return new class extends Migration
             $table->string('image')->nullable(); // Featured image for category
             $table->string('meta_title')->nullable()->comment('SEO title for the category ');
             $table->text('meta_description')->nullable();
-            $table->string('meta_keywords')->nullable();
+            $table->json('meta_keywords')->nullable();
             $table->timestamps();
             $table->integer('order')->default(0);
             $table->boolean('is_active')->default(true);

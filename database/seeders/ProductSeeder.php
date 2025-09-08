@@ -235,7 +235,7 @@ class ProductSeeder extends Seeder
                 'media' => null,
                 'meta_title' => $productData['name'],
                 'meta_description' => Str::limit($productData['meta_description'] ? $productData['meta_description'] : $productData['description'], 160),
-                'meta_keywords' => $productData['meta_keywords'] ?? $productData['tags'],
+                'meta_keywords' => isset($productData['meta_keywords'])  ? json_encode(explode(',', $productData['meta_keywords'])) : null,
                 'tags' => isset($productData['tags'])  ? json_encode(explode(',', $productData['tags'])) : null,
                 'is_active' => true,
                 'price' => $productData['price'],

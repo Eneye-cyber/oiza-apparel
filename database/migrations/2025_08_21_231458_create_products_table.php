@@ -23,7 +23,7 @@ return new class extends Migration
             $table->json('media')->nullable(); // JSON array of additional images for the product
             $table->string('meta_title')->nullable()->comment('SEO title for the category ');
             $table->text('meta_description')->nullable();
-            $table->string('meta_keywords')->nullable();
+            $table->json('meta_keywords')->nullable();
             $table->json('tags')->nullable()->comment('JSON array of tags for the product');
             $table->boolean('is_active')->default(true);
             $table->enum('status', ['in_stock', 'sold_out', 'coming_soon'])->default('in_stock')
@@ -32,7 +32,7 @@ return new class extends Migration
                 ->default('unlimited')
                 ->comment('Order rules for this product: based_on_stock, unlimited, pre_order, unavailable');
 
-            $table->integer('stock_quantity')->default(0)->comment('Available stock if order_type=based_on_stock');
+            $table->integer('stock_quantity')->nullable()->default(0)->comment('Available stock if order_type=based_on_stock');
 
             $table->decimal('price', 10, 2)->default(0.00);
             $table->decimal('discount_price', 10, 2)->nullable();

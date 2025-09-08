@@ -31,6 +31,7 @@ class DatabaseSeeder extends Seeder
             CategorySeeder::class,
             ProductSeeder::class,
             FaqSeeder::class,
+            AttributeSeeder::class,
             // ProductVariantSeeder::class,
         ]);
     }
