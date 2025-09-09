@@ -22,7 +22,7 @@
     <div class="flex flex-col gap-4">
       <div
         class="relative flex items-center justify-center h-64 md:h-[360px] w-full transition-all duration-300 border border-slate-200 2xl:border-[#fafafa] group-hover:border-primary group-hover:text-primary overflow-hidden">
-        <img src="{{ $imageSrc }}" loading="lazy" alt="{{ $imageAlt }}"
+        <img src="{{ Storage::disk(env('APP_DISK', 'local'))->url($imageSrc) }}" loading="lazy" alt="{{ $imageAlt }}"
           class="object-contain w-10/12 h-auto transition-all duration-300 group-hover:scale-110 ">
 
         <!-- Quick View Button -->

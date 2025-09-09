@@ -7,6 +7,8 @@ use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 use Illuminate\Database\Seeder;
 use Illuminate\Support\Str;
 use Carbon\Carbon;
+use App\Helpers\ImageHelper;
+use Illuminate\Support\Facades\Log;
 
 class ProductSeeder extends Seeder
 {
@@ -20,7 +22,7 @@ class ProductSeeder extends Seeder
                 'name' => 'Atiku material (10 Yards)',
                 'category_id' => 20, // Fabrics > Ankara > Atiku
                 'description' => 'Premium Atiku fabric, perfect for traditional attire and special occasions. Aso ebi Qty available.',
-                'cover_media' => 'img/atiku-butter.jpg',
+                'cover_media' => 'atiku-butter.jpg',
                 'main_color' => 'Butter/Beige',
                 'price' => 85000.00,
                 'is_featured' => true,
@@ -32,7 +34,7 @@ class ProductSeeder extends Seeder
                 'name' => 'Hollantex gold (Premium Quality Cotton 6 Yards)',
                 'category_id' => 1, // Fabrics
                 'description' => 'Premium quality Hollantex gold cotton fabric, ideal for elegant outfits and special occasions.',
-                'cover_media' => 'img/hollandex.jpg',
+                'cover_media' => 'hollandex.jpg',
                 'main_color' => 'Gold',
                 'price' => 28000.00,
                 'is_featured' => true,
@@ -44,7 +46,7 @@ class ProductSeeder extends Seeder
                 'name' => 'High Quality Dutch Holland Vlisco (6 Yards)',
                 'category_id' => 1, // Fabrics
                 'description' => 'High-quality Dutch Holland Vlisco fabric, known for its vibrant patterns and durability, perfect for stylish outfits.',
-                'cover_media' => 'img/holland.jpg',
+                'cover_media' => 'holland.jpg',
                 'main_color' => null, // Not specified, so null
                 'price' => 17000.00,
                 'is_featured' => true,
@@ -56,7 +58,7 @@ class ProductSeeder extends Seeder
                 'name' => 'Blue Isi-agu Traditional Fabric (Per Yard)',
                 'category_id' => 4, // Fabrics > Ankara > African Prints
                 'description' => 'Authentic Nigerian Isi-agu fabric with traditional lion head motifs, perfect for ceremonial attire.',
-                'cover_media' => 'img/Blue-Isi-agu-Traditional-Fabric-Per-Yard.png.webp',
+                'cover_media' => 'Blue-Isi-agu-Traditional-Fabric-Per-Yard.png.webp',
                 'main_color' => 'Blue',
                 'price' => 19.99,
                 'is_featured' => false, // Not specified, default to false
@@ -68,7 +70,7 @@ class ProductSeeder extends Seeder
                 'name' => 'Premium African Wax Print (6 Yards)',
                 'category_id' => 4, // Fabrics > Ankara > African Prints
                 'description' => 'Vibrant wax print fabric with intricate patterns, suitable for dresses, skirts, and headwraps.',
-                'cover_media' => 'img/wrapper.webp',
+                'cover_media' => 'wrapper.webp',
                 'main_color' => null, // Not specified, so null
                 'price' => 89.99,
                 'is_featured' => true,
@@ -80,7 +82,7 @@ class ProductSeeder extends Seeder
                 'name' => 'Handwoven Kente Stole',
                 'category_id' => 6, // Fabrics > Ankara > Kente
                 'description' => 'Genuine Ghanaian Kente cloth stole with symbolic patterns, ideal for special occasions.',
-                'cover_media' => 'img/scarf.jpg',
+                'cover_media' => 'scarf.jpg',
                 'main_color' => null, // Not specified, so null
                 'price' => 45.50,
                 'is_featured' => true,
@@ -92,7 +94,7 @@ class ProductSeeder extends Seeder
                 'name' => 'Yoruba Adire Eleko Tie-Dye',
                 'category_id' => 16, // Fabrics > Adire > Cotton Adire
                 'description' => 'Indigo-dyed cotton fabric with traditional Yoruba resist-dye patterns.',
-                'cover_media' => 'img/square-fabric.webp',
+                'cover_media' => 'square-fabric.webp',
                 'main_color' => 'Indigo',
                 'price' => 32.75,
                 'is_featured' => false, // Not specified, default to false
@@ -104,7 +106,7 @@ class ProductSeeder extends Seeder
                 'name' => 'Aso Oke Fila (Traditional Cap)',
                 'category_id' => 35, // Accessories > Aso-oke Fila Cap
                 'description' => 'Handwoven Yoruba men\'s cap made from premium Aso Oke fabric.',
-                'cover_media' => 'img/cap.jpg',
+                'cover_media' => 'cap.jpg',
                 'main_color' => null, // Not specified, so null
                 'price' => 28.00,
                 'is_featured' => false, // Not specified, default to false
@@ -116,7 +118,7 @@ class ProductSeeder extends Seeder
                 'name' => 'Nigerian Lace Material (3 Yards)',
                 'category_id' => 18, // Fabrics > Lace
                 'description' => 'Elegant lace fabric perfect for bridal and formal outfits.',
-                'cover_media' => 'img/white-lace.webp',
+                'cover_media' => 'white-lace.webp',
                 'main_color' => 'White',
                 'price' => 65.25,
                 'is_featured' => false, // Not specified, default to false
@@ -128,7 +130,7 @@ class ProductSeeder extends Seeder
                 'name' => 'Malian Bogolan Mudcloth',
                 'category_id' => 17, // Fabrics > Adire > Mali Indigo
                 'description' => 'Traditional Bamana mud-dyed cotton with geometric patterns.',
-                'cover_media' => 'img/brown-fabric.jpg',
+                'cover_media' => 'brown-fabric.jpg',
                 'main_color' => 'Brown',
                 'price' => 54.99,
                 'is_featured' => false, // Not specified, default to false
@@ -140,7 +142,7 @@ class ProductSeeder extends Seeder
                 'name' => 'East African Kitenge Bundle',
                 'category_id' => 4, // Fabrics > Ankara > African Prints
                 'description' => 'Colorful Swahili coastal fabric bundle (3 pieces, 6 yards each).',
-                'cover_media' => 'img/african_print_blue.jpg',
+                'cover_media' => 'african_print_blue.jpg',
                 'main_color' => 'Blue',
                 'price' => 72.50,
                 'is_featured' => false, // Not specified, default to false
@@ -221,9 +223,17 @@ class ProductSeeder extends Seeder
 
             // Convert non-URL cover_media to full URL using asset()
             $coverImage = $productData['cover_media'];
-            if (!Str::startsWith($coverImage, ['http://', 'https://'])) {
-                $coverImage = asset($coverImage);
+            if (Str::startsWith($coverImage, ['http://', 'https://'])) {
+                // Download external image and store locally
+                $coverImage = ImageHelper::downloadAndStoreImage($coverImage, $slug, 'products/covers', env('APP_DISK', 'local'));
+                Log::info($coverImage);
+                // Log::info(asset($coverImage));
             }
+                Log::info(['raw' => $coverImage]);
+
+            // convert to full URL using asset()
+            // $coverImage = asset($coverImage);
+
 
             $insertData[] = [
                 'name' => $productData['name'],

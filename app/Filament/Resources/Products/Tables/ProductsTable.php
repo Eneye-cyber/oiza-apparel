@@ -19,7 +19,7 @@ class ProductsTable
     {
         return $table
             ->columns([
-                ImageColumn::make('cover_media')
+                ImageColumn::make('cover_media')->disk(env('APP_DISK', 'local'))
                     ->square(),
                 TextColumn::make('name')
                     ->searchable()

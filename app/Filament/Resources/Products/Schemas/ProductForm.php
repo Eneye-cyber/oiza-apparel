@@ -4,10 +4,13 @@ namespace App\Filament\Resources\Products\Schemas;
 
 use App\Enums\OrderType;
 use App\Enums\ProductStatus;
+use App\Models\Attribute;
+use App\Models\AttributeType;
 use App\Models\Products\Product;
 use Filament\Forms\Components\Checkbox;
 use Filament\Forms\Components\FileUpload;
 use Filament\Forms\Components\MarkdownEditor;
+use Filament\Forms\Components\Repeater;
 use Filament\Forms\Components\RichEditor;
 use Filament\Forms\Components\Select;
 use Filament\Forms\Components\TagsInput;
@@ -29,7 +32,7 @@ class ProductForm
       ->components([
 
         Grid::make(['default' => 12])->schema([
-          
+
           Group::make()->schema([
             Section::make('Product Details')
               ->schema([
@@ -81,11 +84,13 @@ class ProductForm
                   ->acceptedFileTypes(['image/*', 'video/mp4', 'video/webm'])
                   ->previewable(true)
                   ->maxSize(2560)
+                  ->disk(env('APP_DISK', 'local'))
                   ->helperText('Main cover image/video (2.5MB max)'),
 
                 FileUpload::make('media')
                   ->multiple()
                   ->directory('products/media')
+                  ->disk(env('APP_DISK', 'local'))
                   ->reorderable()
                   ->acceptedFileTypes(['image/*', 'video/mp4', 'video/webm'])
                   ->previewable(true)
@@ -95,6 +100,71 @@ class ProductForm
               ])
               ->columns(1)
               ->columnSpan(['default' => 12, 'md' => 8]),
+
+            Section::make('Product Attributes')
+              ->schema([
+                Repeater::make('attributes')
+                  ->relationship('attributes') // 👈 binds to belongsToMany
+                  ->collapsible()
+                  ->default([])              // 👈 ensures repeater starts empty
+                  ->collapsed()              // 👈 optional: collapse items by default
+                  ->addActionLabel('Add Attribute')
+                  ->schema([
+
+                    // Attribute type (color, size, material...)
+                    Select::make('attribute_type_id')
+                      ->label('Attribute Type')
+                      ->options(AttributeType::all()->pluck('name', 'id'))
+                      ->reactive()
+                      ->afterStateUpdated(fn($state, callable $set) => $set('attribute_id', null))
+                      ->required(),
+
+                    // Attribute value depends on selected type
+                    // Select::make('attribute_id')
+                    //   ->label('Attribute Value')
+                    //   ->options(function (callable $get) {
+                    //     $typeId = $get('attribute_type_id');
+                    //     return $typeId
+                    //       ? Attribute::where('attribute_type_id', $typeId)->pluck('value', 'id')
+                    //       : [];
+                    //   })
+                    //   ->required(),
+
+                    Select::make('value')
+                      ->label('Attribute Value')
+                      ->options(fn($get) => $get('attribute_type_id')
+                        ? Attribute::where('attribute_type_id', $get('attribute_type_id'))->pluck('value', 'id')
+                        : [])
+                      ->searchable()
+                      ->required()
+                      ->createOptionForm([
+                        TextInput::make('value')->required()->maxLength(255),
+                      ])
+                      ->createOptionUsing(fn($data, $get) => Attribute::create([
+                        'attribute_type_id' => $get('attribute_type_id'),
+                        'value'             => $data['value'],
+                      ])->id),
+
+
+                    // Pivot fields
+                    TextInput::make('pivot.quantity')
+                      ->numeric()
+                      ->minValue(0)
+                      ->nullable()
+                      ->label('Quantity'),
+
+                    TextInput::make('pivot.price')
+                      ->numeric()
+                      ->minValue(0)
+                      ->prefix('₦')
+                      ->nullable()
+                      ->label('Price Override'),
+                  ])
+                  ->columns(2),
+              ])
+              ->columns(1)
+              ->columnSpan(['default' => 12, 'md' => 8]),
+
           ])->columns(1)->columnSpan(['default' => 12, 'md' => 8]),
 
           Group::make()->schema([
@@ -193,7 +263,85 @@ class ProductForm
                   ->helperText('Comma-separated keywords for SEO'),
               ])->columns(1)
           ])->columns(1)->columnSpan(['default' => 12, 'md' => 4]),
-          
+
+          Section::make('Product Variants')->schema([
+            Repeater::make('variants')
+              ->relationship('variants') // assumes Product hasMany ProductVariant
+              ->default([])              // 👈 ensures repeater starts empty
+              ->collapsed()              // 👈 optional: collapse items by default
+              ->collapsible()
+              ->schema([
+                TextInput::make('name')
+                  ->required()
+                  ->maxLength(255)
+                  ->live(onBlur: true)
+                  ->afterStateUpdated(function ($state, callable $set, callable $get) {
+                    if ($state) {
+                      $productSlug = $get('../../slug') ?? ''; // go up 2 levels to parent form
+                      $set('slug', Str::slug(trim($productSlug . '-' . $state)));
+                    }
+                  })->columnSpan(2),
+
+                TextInput::make('price')
+                  ->numeric()
+                  ->prefix('₦')
+                  ->nullable()
+                  ->minValue(0)
+                  ->default(fn($get) => $get('../../price')) // TODO => set it to discount price if given
+                  ->helperText('Overrides product price if set')->columnSpan(2),
+
+                TextInput::make('slug')
+                  ->label('Slug')
+                  ->required()
+                  ->disabled()
+                  ->dehydrated()
+                  ->unique('product_variants', 'slug', ignoreRecord: true)
+                  ->columnSpan(2),
+
+                FileUpload::make('media')
+                  ->directory('products/variants')
+                  ->acceptedFileTypes(['image/*', 'video/mp4', 'video/webm'])
+                  ->disk(env('APP_DISK', 'local'))
+                  ->previewable(true)
+                  ->maxSize(5120)
+
+                  ->required()->columnSpanFull(),
+
+
+
+                TextInput::make('max_quantity')->columnSpan(2)
+                  ->numeric()
+                  ->nullable()
+                  ->minValue(1)
+                  ->helperText('Maximum per order (leave empty to fallback to product)'),
+
+                Select::make('order_type')->columnSpan(2)
+                  ->label('Order Type')
+                  ->options([
+                    'based_on_stock' => 'Based on Stock',
+                    'unlimited' => 'Unlimited',
+                    'pre_order' => 'Pre-order',
+                    'unavailable' => 'Unavailable',
+                  ])
+                  ->default(fn($get) => $get('../../order_type'))
+                  ->reactive()
+                  ->afterStateUpdated(function ($state, callable $set) {
+                    if ($state !== 'based_on_stock') {
+                      $set('stock_quantity', null);
+                    }
+                  }),
+
+                TextInput::make('stock_quantity')->columnSpan(2)
+                  ->label('Stock Quantity')
+                  ->numeric()
+                  ->nullable()
+                  ->minValue(0)
+                  ->visible(fn($get) => $get('order_type') === 'based_on_stock')
+                  ->requiredIf('order_type', 'based_on_stock'),
+              ])->columns(6)
+              ->addActionLabel('Add Variant'),
+          ])->visibleOn('create')->columns(1)->columnSpan(['default' => 12]),
+
         ]),
 
       ])->columns(1);

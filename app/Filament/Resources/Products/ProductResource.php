@@ -2,7 +2,7 @@
 
 namespace App\Filament\Resources\Products;
 
-
+use App\Filament\Resources\ProductResource\RelationManagers\VariantsRelationManager;
 use App\Filament\Resources\Products\Pages\CreateProduct;
 use App\Filament\Resources\Products\Pages\EditProduct;
 use App\Filament\Resources\Products\Pages\ListProducts;
@@ -16,7 +16,7 @@ use Filament\Resources\Resource;
 use Filament\Schemas\Schema;
 use Filament\Support\Icons\Heroicon;
 use Filament\Tables\Table;
-
+use Illuminate\Database\Eloquent\Model;
 
 class ProductResource extends Resource
 {
@@ -42,6 +42,14 @@ class ProductResource extends Resource
         return ProductsTable::configure($table);
     }
 
+    public static function getRelations(): array
+    {
+        return [
+            //
+            VariantsRelationManager::class,
+            // RelationManagers\AttributesRelationManager::class,
+        ];
+    }
 
 
     public static function getPages(): array
