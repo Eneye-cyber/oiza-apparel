@@ -23,13 +23,15 @@
 
 
       <!-- Hero Image  -->
-      <div class="grid grid-cols-2 gap-4 md:gap-6">
+      <div class="grid grid-cols-2 gap-4">
         <div class="flex flex-col" data-aos="fade-up">
           <div class="object-fit overflow-clip mt-auto relative">
-            <div class="gradient-element"></div>
+            {{-- <div class="gradient-element"></div> --}}
             <!--  -->
             <!-- <img class="object-fill" src="https://cdn.prod.website-files.com/66d5c8a0f16078270af4fa77/66d5c8b6f65633bf7dd0ddd7_Image-02.jpg" alt="hero-1" loading="eager" width="308" height="450"> -->
-            <img class="object-fill xl:h-[436px]" src="{{ asset('img/hero_1.jpg') }}" alt="hero-1" loading="eager" width="308" height="450">
+            {{-- <img class="object-fill xl:h-[436px]" src="{{ asset('img/hero_1.jpg') }}" alt="hero-1" loading="eager" width="308" height="450"> --}}
+            <img class="object-cover xl:h-[436px] drop-shadow-2xl" src="{{ asset('img/hero_3.jpg') }}" alt="hero-1" loading="eager" width="308" height="450">
+            {{-- <img class="object-cover xl:h-[436px]" src="https://i.pinimg.com/736x/69/57/43/6957431693507e826a1840c32b83ed75.jpg" alt="hero-1" loading="eager" width="308" height="450"> --}}
             <!-- <img class="object-fill" src="https://i.pinimg.com/1200x/3e/4e/10/3e4e104858d8110e43458ae8e8ff28d1.jpg" alt="hero-1" loading="eager" width="308" height="450"> -->
           </div>
         </div>
@@ -37,10 +39,11 @@
         <div class="flex flex-col gap-3.5" data-aos="fade-down">
           <div class="flex-1">
             <div class="object-fit overflow-clip relative">
-              <div class="gradient-element -rotate-y-180"></div>
+              {{-- <div class="gradient-element -rotate-y-180"></div> --}}
 
               <!-- <img class="object-fill" src="https://cdn.prod.website-files.com/66d5c8a0f16078270af4fa77/66d5c8b63cd3dcbf3d12ce24_Image-01.jpg" alt="hero-1" loading="eager" width="308" height="498"> -->
-              <img class="object-fill" src="{{ asset('img/hero_2.jpg') }}" alt="hero-2" loading="eager" width="308" height="498">
+              <img class="object-fill drop-shadow-2xl" src="{{ asset('img/hero_2.jpg') }}" alt="hero-2" loading="eager" width="308" height="498">
+              {{-- <img class="object-cover max-h-[480px]" src="https://i.pinimg.com/736x/dc/c8/78/dcc878d77831df990413a6c616682813.jpg" alt="hero-2" loading="eager" width="308" height="498"> --}}
             </div>
 
           </div>
@@ -60,7 +63,7 @@
 <!-- Value Section  -->
 <section class="py-6">
   <div class="container">
-    <div class="grid md:grid-cols-3 gap-3" data-aos="fade-up">
+    <div class="grid md:grid-cols-3 gap-3" data-aos="zoom in" data-aos-anchor-placement="top-bottom">
       <figure class="flex items-center gap-2.5">
         <x-ionicon-diamond-outline class="size-8 text-primary stoke-1" />
         <figcaption class="text-sm">
@@ -91,7 +94,7 @@
 <!-- New arrivals  -->
 <article class="py-8">
   <div class="container">
-    <div class="flex justify-between items-baseline flex-wrap" data-aos="fade-up" data-aos-delay="100">
+    <div class="flex justify-between items-baseline flex-wrap" data-aos="fade-up" data-aos-delay="100" data-aos-anchor-placement="top-bottom">
       <h3 class="section-title-text">New Arrivals</h3>
       <a href="{{ route('shop') }}" class="flex flex-center gap-2 transition-all group hover:text-primary">
         <h5 class="font-medium">View Full Collection</h5>

@@ -1,4 +1,4 @@
-<header class="w-full pt-5 pb-2.5 font-dm-sans bg-white relative">
+<header class="w-full md:pt-4 py-2.5 font-dm-sans bg-white relative">
   <div class="container max-md:px-3 mx-auto">
     <div class="hidden md:flex justify-between items-center pb-2 border-b text-xs border-b-[#2222221a]" data-aos="fade-down">
       <div class="flex items-center gap-2">
