@@ -14,22 +14,25 @@ class Category extends Model
 {
     use HasFactory;
 
-    protected $fillable = [
-        'name',
-        'slug',
-        'parent_id',
-        'description',
-        'image',
-        'meta_title',
-        'meta_description',
-        'meta_keywords',
-        'order',
-        'is_active',
-        'full_slug_path',
-    ];
+    // protected $fillable = [
+    //     'name',
+    //     'slug',
+    //     'parent_id',
+    //     'description',
+    //     'image',
+    //     'meta_title',
+    //     'meta_description',
+    //     'meta_keywords',
+    //     'order',
+    //     'is_active',
+    //     'full_slug_path',
+    // ];
+
+    protected $guarded = [];
 
     protected $casts = [
         'is_active' => 'boolean',
+        'meta_keywords' => 'array'
     ];
 
     protected static function booted()

@@ -27,6 +27,8 @@ class AdminPanelProvider extends PanelProvider
             ->default()
             ->id('admin')
             ->path('admin')
+            ->brandName('Oiza Apparel')
+            ->favicon('/favicon/favicon-16x16.png')
             ->login()
             ->colors([
                 'primary' => "#b59a6c",
