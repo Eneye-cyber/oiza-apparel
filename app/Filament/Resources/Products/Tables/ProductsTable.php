@@ -18,6 +18,7 @@ class ProductsTable
     public static function configure(Table $table): Table
     {
         return $table
+            ->defaultPaginationPageOption(25)
             ->columns([
                 ImageColumn::make('cover_media')->disk(env('APP_DISK', 'local'))
                     ->square(),

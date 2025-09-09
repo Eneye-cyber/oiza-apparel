@@ -10,13 +10,14 @@ use App\Filament\Resources\Products\Pages\ViewProduct;
 use App\Filament\Resources\Products\Schemas\ProductForm;
 use App\Filament\Resources\Products\Schemas\ProductInfolist;
 use App\Filament\Resources\Products\Tables\ProductsTable;
+use App\Filament\Resources\Products\Widgets\ProductOverview;
 use App\Models\Products\Product;
 use BackedEnum;
 use Filament\Resources\Resource;
 use Filament\Schemas\Schema;
 use Filament\Support\Icons\Heroicon;
 use Filament\Tables\Table;
-use Illuminate\Database\Eloquent\Model;
+
 
 class ProductResource extends Resource
 {
@@ -31,6 +32,12 @@ class ProductResource extends Resource
         return ProductForm::configure($schema);
     }
 
+    public static function getWidgets(): array
+    {
+        return [
+            ProductOverview::class,
+        ];
+    }
 
     public static function infolist(Schema $schema): Schema
     {
@@ -50,6 +57,9 @@ class ProductResource extends Resource
             // RelationManagers\AttributesRelationManager::class,
         ];
     }
+
+
+
 
 
     public static function getPages(): array

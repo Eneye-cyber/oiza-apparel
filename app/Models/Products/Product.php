@@ -76,4 +76,57 @@ class Product extends Model
             ->using(\App\Models\Pivots\AttributeProduct::class)
             ->withTimestamps();
     }
+
+    public function scopeActive($query)
+    {
+        return $query->whereNot(function ($q) {
+            $this->applyInactiveConstraints($q);
+        });
+    }
+
+    public function scopeInactive($query)
+    {
+        return $query->where(function ($q) {
+            $this->applyInactiveConstraints($q);
+        });
+    }
+
+    /**
+     * Apply inactive product conditions.
+     */
+    private function applyInactiveConstraints($query): void
+    {
+        $query->where('is_active', false)
+            ->orWhere(function ($q2) {
+                $q2->where('status', ProductStatus::InStock)
+                    ->where('order_type', OrderType::BasedOnStock)
+                    ->where('stock_quantity', '<=', 0);
+            })
+            ->orWhere(function ($q2) {
+                $q2->where('status', ProductStatus::SoldOut)
+                    ->where('order_type', OrderType::Unavailable);
+            });
+    }
+    
+    public function getIsActuallyInactiveAttribute(): bool
+    {
+        if (! $this->is_active) {
+            return true;
+        }
+
+        if ($this->status === ProductStatus::InStock && $this->stock_quantity <= 0) {
+            return true;
+        }
+
+        if ($this->status === ProductStatus::SoldOut && $this->order_type === OrderType::Unavailable) {
+            return true;
+        }
+
+        return false;
+    }
+
+    public function getIsActuallyActiveAttribute(): bool
+    {
+        return ! $this->is_actually_inactive;
+    }
 }
