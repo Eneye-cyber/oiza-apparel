@@ -5,4 +5,4 @@ services:
     plan: free
     autoDeploy: true
     dockerfilePath: ./Dockerfile
-    buildCommand: "./scripts/00-laravel-deploy.sh"
+    # buildCommand: "./scripts/00-laravel-deploy.sh"
