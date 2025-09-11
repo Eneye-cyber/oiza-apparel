@@ -1,7 +1,8 @@
 #!/usr/bin/env bash
 echo "Running composer"
-composer global require hirak/prestissimo
-composer install --no-dev --working-dir=/var/www/html
+# composer global require hirak/prestissimo
+# composer install --no-dev --working-dir=/var/www/html
+composer install --no-dev --working-dir=/var/www/html --optimize-autoloader --no-interaction
 
 echo "Creating symbolic storage link..."
 php artisan storage:link
