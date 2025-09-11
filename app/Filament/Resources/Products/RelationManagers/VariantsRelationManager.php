@@ -17,7 +17,7 @@ use Illuminate\Support\Str;
 use Filament\Schemas\Schema;
 use Filament\Tables\Columns\ImageColumn;
 
-class VariantsRelationManager extends RelationManager
+class ProductVariantsRelationManager extends RelationManager
 {
     protected static string $relationship = 'variants';
 
