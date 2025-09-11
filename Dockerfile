@@ -45,20 +45,21 @@ RUN composer install --no-dev --optimize-autoloader --no-interaction
 ENV APP_ENV=production
 ENV APP_DEBUG=false
 ENV LOG_CHANNEL=stderr
+ENV DB_CONNECTION=pgsql
 
 # Fix Laravel permissions (for storage & cache dirs)
 RUN chown -R www-data:www-data /var/www/html \
     && chmod -R 775 /var/www/html/storage /var/www/html/bootstrap/cache
 
 # Run setup that doesn’t depend on DB
-RUN php artisan storage:link && \
-    php artisan optimize:clear && \
-    php artisan config:cache && \
-    php artisan route:cache && \
-    php artisan icons:cache && \
-    php artisan filament:cache-components && \
-    php artisan view:cache && \
-    php artisan event:cache
+# RUN php artisan storage:link && \
+#     php artisan config:clear && \
+#     php artisan config:cache && \
+#     php artisan route:cache && \
+#     php artisan icons:cache && \
+#     php artisan filament:cache-components && \
+#     php artisan view:cache && \
+#     php artisan event:cache
 
 # Copy configs
 COPY ./conf/nginx/nginx-site.conf /etc/nginx/conf.d/default.conf
