@@ -1,4 +1,4 @@
-FROM richarvey/nginx-php-fpm:latest
+FROM php:8.3-fpm
 
 # Copy application files
 COPY . .
