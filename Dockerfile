@@ -52,18 +52,10 @@ ENV DB_CONNECTION=pgsql
 RUN chown -R www-data:www-data /var/www/html \
     && chmod -R 775 /var/www/html/storage /var/www/html/bootstrap/cache
 
-# Run setup that doesn’t depend on DB
-# RUN php artisan storage:link && \
-#     php artisan config:clear && \
-#     php artisan config:cache && \
-#     php artisan route:cache && \
-#     php artisan icons:cache && \
-#     php artisan filament:cache-components && \
-#     php artisan view:cache && \
-#     php artisan event:cache
 
 # Copy configs
 RUN rm -f /etc/nginx/conf.d/default.conf
+COPY ./conf/nginx/nginx.conf /etc/nginx/nginx.conf
 COPY ./conf/nginx/nginx-site.conf /etc/nginx/conf.d/default.conf
 COPY ./conf/supervisord.conf /etc/supervisor/conf.d/supervisord.conf
 
