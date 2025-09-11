@@ -1,8 +1,8 @@
-<header class="w-full pt-5 pb-2.5 font-dm-sans bg-white relative">
+<header class="w-full md:pt-4 py-2.5 font-dm-sans bg-white relative">
   <div class="container max-md:px-3 mx-auto">
     <div class="hidden md:flex justify-between items-center pb-2 border-b text-xs border-b-[#2222221a]" data-aos="fade-down">
       <div class="flex items-center gap-2">
-        <x-heroicon-o-phone class="size-5 text-gold" aria-hidden="true" />
+        <x-heroicon-o-phone class="size-5 text-primary" aria-hidden="true" />
         <a href="tel:(+123)4567890" class="font-dm-sans text-black opacity-75 hover:opacity-100">( +123 ) 456
             7890</a>
       </div>
@@ -14,7 +14,7 @@
     <section class="pt-2">
       <div class="flex justify-between items-center">
         <h2 data-aos="fade-down" data-aos-delay="100">
-          <a href="/" class="font-playfair-display text-3xl font-medium"
+          <a href="/" class="font-playfair-display text-3xl font-medium text-primary drop-shadow-xs drop-shadow-primary/20"
               aria-label="Oiza Apparels Home">
               OIZA
           </a>
@@ -79,7 +79,7 @@
         </nav>
 
         <!-- Mobile Navigation -->
-        <nav class="md:hidden hidden flex-col space-y-2 mt-4 bg-white p-4 shadow-lg absolute w-full left-0 top-16 z-50"
+        <nav class="md:hidden hidden flex-col space-y-2 mt-4 bg-white p-4 shadow-lg absolute w-full left-0 top-12 z-50"
             id="mobile-nav" aria-label="Mobile navigation">
             <a href="{{ Route::has('shop') ? route('shop') : '#' }}"
                 class="p-3 block hover:text-[#555] transition-colors duration-200">New Arrivals</a>
@@ -106,7 +106,7 @@
 
         <div class="w-auto flex flex-center gap-3">
             <button class="inline-block cursor-pointer relative" onclick="openCart()" aria-label="View shopping cart"  data-aos="fade-down" data-aos-delay="100">
-                <x-heroicon-o-shopping-bag class="size-5 text-gold" aria-hidden="true" />
+                <x-heroicon-o-shopping-bag class="size-5 text-primary" aria-hidden="true" />
                 <span
                     class="absolute -top-1.5 -right-1.5 bg-primary rounded-full h-3 w-3  flex-center hidden animate-pulse"
                     id="cart-count"></span>

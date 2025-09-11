@@ -25,7 +25,7 @@ function renderCart(data) {
   const cartSubtotal = document.getElementById("cart-subtotal");
   const headerCartIndicator = document.getElementById("cart-count");
 
-
+  console.log(cartTitle)
   cartTitle.textContent = `SHOPPING BAG (${data.count})`;
 
   if (data.items.length === 0) {
@@ -56,7 +56,7 @@ function renderCart(data) {
                   <div class="flex ">
                     <p class="text-sm opacity-70 tracking-wide pr-2">Size: ${item.product.size ?? '6 yards'}</p>
                     <span class="text-sm opacity-70">/</span>
-                    <p class="text-sm opacity-70 tracking-wide pl-2">Color: ${item.product.color ?? 'Blue'}</p>
+                    <p class="text-sm opacity-70 tracking-wide pl-2">Color: ${item.product.main_color ?? 'Blue'}</p>
                   </div>
 
                   <div class="flex items-end mt-auto">

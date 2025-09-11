@@ -5,38 +5,54 @@
 @section('content')
     <article class="pb-12">
         <div class="bg-gold py-5">
-            <div class="container text-white">
+            <div class="container">
                 <dl class="flex gap-2.5">
-                    <a href="/"
-                        class="inline-block pr-2.5 border-r border-cream text-sm opacity-75 hover:opacity-100">Home</a>
-                    <a href="/shop" class="inline-block pr-2.5 text-sm font-semibold">Products</a>
+                    <a href="/" class="breadcrumb-link breadcrumb-link-divider">Home</a>
+                    <a href="/shop" class="breadcrumb-link breadcrumb-link-active">Products</a>
                 </dl>
             </div>
         </div>
         <div class="container">
-            <div class="py-12 text-center">
-                <h2 class="text-6xl leading-[0.9] font-playfair-display">Shop</h2>
+            <div class="py-8 sm:mb-0 sm:py-12 text-center">
+                <h2 class="page-title">Shop</h2>
             </div>
+
+            {{-- <div class="separator mb-3 sm:hidden"></div> --}}
 
             <section class="flex flex-col flex-between">
                 <div class="flex items-start flex-wrap w-full">
-                    <aside
-                        class="grid grid-cols-2 sm:grid-cols-3 w-full md:w-1/5 md:sticky md:top-14 md:flex flex-col items-start gap-3.5 md:gap-1 mb-10  !bg-scroll">
+                    <div class="md:hidden relative w-full py-1 mb-4 border-y border-black/30" aria-haspopup="true"
+                        aria-expanded="false">
+                        <button id="sidebar-trigger"
+                            class="py-3 w-full text-left flex items-center justify-between hover:text-[#555] text-primary duration-200"
+                            aria-label="Categories menu" data-submenu-toggle="">
+                            <span class="capitalize">{{ request()->get('subcategory') ?? request()->get('category') ?? 'All products'}}</span>
+                            <x-heroicon-c-arrow-right class="h-3.5 w-auto" />
+                        </button>
+                        <ul class="pl-4 space-y-2 hidden">
+
+                        </ul>
+                    </div>
+                    <aside id="shop-sidebar" class="sidebar">
+                        {{-- All products --}}
                         <a href="/shop"
-                            class="text-center text-white bg-black md:text-left md:bg-white md:text-black block py-2.5 md:pr-8 text-sm font-semibold {{ !request()->has('category') ? 'bg-black text-white md:text-primary' : '' }}">
+                            class="sidebar-link sidebar-link-hover {{ !request()->has('category') ? 'sidebar-link-active' : '' }}">
                             All products
                         </a>
 
+                        {{-- Categories --}}
                         @foreach ($categories as $category)
                             <div class="flex flex-col w-full">
                                 <a href="/shop?category={{ Str::slug($category['name']) }}"
-                                    class="text-center md:text-left bg-white block py-2.5 md:pr-8 text-sm font-semibold opacity-80 md:hover:underline md:hover:font-semibold max-md:hover:bg-black max-md:hover:text-white hover:opacity-100 {{ request()->get('category') == Str::slug($category['name']) && !request()->has('subcategory') ? 'bg-black text-white md:text-primary' : '' }}">
+                                    class="sidebar-link sidebar-link-hover {{ request()->get('category') == Str::slug($category['name']) && !request()->has('subcategory') ? 'sidebar-link-active' : '' }}">
                                     {{ $category['name'] }}
                                 </a>
+
+                                {{-- Subcategories --}}
                                 @if (!empty($category['subcategories']))
                                     @foreach ($category['subcategories'] as $subcategory)
                                         <a href="/shop?category={{ Str::slug($category['name']) }}&subcategory={{ Str::slug($subcategory['name']) }}"
-                                            class="hidden md:block text-center md:text-left bg-white py-2 md:pr-8 md:pl-6 text-xs md:text-sm opacity-60 md:hover:underline md:hover:font-semibold max-md:hover:bg-black max-md:hover:text-white hover:opacity-100 hover:font-semibold {{ request()->get('subcategory') == Str::slug($subcategory['name']) ? 'bg-black text-white md:text-primary' : '' }}">
+                                            class="sidebar-sub sidebar-link-hover {{ request()->get('subcategory') == Str::slug($subcategory['name']) ? 'sidebar-link-active' : '' }}">
                                             {{ $subcategory['name'] }}
                                         </a>
                                     @endforeach
@@ -44,6 +60,7 @@
                             </div>
                         @endforeach
                     </aside>
+
 
                     <div class="w-full md:w-4/5 !bg-scroll">
                         <form id="filter-form" action="/shop" method="GET" class="flex flex-wrap gap-3 items-center mb-4">
@@ -55,39 +72,47 @@
                             @endif
 
                             <!-- Filter: Color Dropdown -->
-                            <div class="flex items-center">
+                            <div class="hidden sm:flex items-center w-full max-md:flex-1 sm:w-auto">
                                 <label for="color" class="mr-2 text-sm font-semibold opacity-80">Color:</label>
                                 <select id="color" name="color"
-                                    class="bg-white border border-slate-200 py-2 px-3 text-sm rounded hover:bg-black hover:text-white transition">
+                                    class="max-md:flex-1 bg-white border border-slate-200 py-2 px-3 text-sm rounded hover:bg-black hover:text-white transition">
                                     <option value="" {{ request()->get('color') == '' ? 'selected' : '' }}>All
                                     </option>
                                     <option value="red" {{ request()->get('color') == 'red' ? 'selected' : '' }}>Red
                                     </option>
                                     <option value="blue" {{ request()->get('color') == 'blue' ? 'selected' : '' }}>Blue
                                     </option>
-                                    <option value="green" {{ request()->get('color') == 'green' ? 'selected' : '' }}>Green
+                                    <option value="green" {{ request()->get('color') == 'green' ? 'selected' : '' }}>
+                                        Green
                                     </option>
-                                    <option value="black" {{ request()->get('color') == 'black' ? 'selected' : '' }}>Black
+                                    <option value="black" {{ request()->get('color') == 'black' ? 'selected' : '' }}>
+                                        Black
                                     </option>
                                 </select>
                             </div>
 
                             <!-- Filter: Price Range -->
-                            <div class="flex items-center gap-2">
+                            <div class="hidden max-md:flex-1 max-w-full sm:flex items-center gap-2">
                                 <label class="text-sm font-semibold opacity-80">Price:</label>
                                 <input type="number" name="min_price" value="{{ request()->get('min_price') }}"
                                     placeholder="Min"
-                                    class="w-20 bg-white border border-slate-200 py-2 px-3 text-sm rounded hover:border-amber-100 transition">
+                                    class="max-md:flex-auto inline-block w-auto md:w-20 bg-white border border-slate-200 py-2 px-3 text-sm rounded hover:border-amber-100 transition">
                                 <span class="text-sm opacity-80">-</span>
                                 <input type="number" name="max_price" value="{{ request()->get('max_price') }}"
                                     placeholder="Max"
-                                    class="w-20 bg-white border border-slate-200 py-2 px-3 text-sm rounded hover:border-amber-100 transition">
+                                    class="max-md:flex-auto inline-block w-auto md:w-20 bg-white border border-slate-200 py-2 px-3 text-sm rounded hover:border-amber-100 transition">
                                 <button type="submit"
-                                    class="bg-black text-white py-2 px-4 text-sm rounded hover:bg-amber-100 hover:text-black transition">Apply</button>
+                                    class="max-md:flex-1 bg-black text-white py-2 px-4 text-sm rounded hover:bg-amber-100 hover:text-black transition">Apply</button>
                             </div>
 
+                            {{-- Filter button  --}}
+                            <button class="md:hidden inline-flex items-center gap-2">
+                                <x-ionicon-filter color="" class="size-4 text-primary" />
+                                <span class="">Filter</span>
+                            </button>
                             <!-- Sort By Dropdown -->
-                            <div class="ml-auto flex items-center gap-4">
+                            <div class=" ml-auto flex items-center gap-2 sm:gap-4">
+                                {{-- <p class="mr-auto md:hidden">Showing {{ $products->firstItem() }} – {{ $products->lastItem() }} of {{ $products->total() }} results</p> --}}
                                 <label for="sort" class="mr-2 text-sm font-semibold opacity-80">Sort by:</label>
                                 <select id="sort" name="sort"
                                     class="bg-white border border-slate-200 py-2 px-3 text-sm rounded hover:bg-black hover:text-white transition">
@@ -135,7 +160,7 @@
                             </div>
                         @else
                             <div role="list" id="products-listing"
-                                class="product-list grid sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6 py-2">
+                                class="product-list grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-3 md:gap-6 py-2 gap-y-6">
                                 @foreach ($products as $product)
                                     <x-product-card :product="$product" :href="route('shop.product', ['product' => $product->slug])" />
                                 @endforeach
@@ -182,7 +207,7 @@
             const resetButton = document.getElementById('reset-filters');
             const minPriceInput = document.querySelector('input[name="min_price"]');
             const maxPriceInput = document.querySelector('input[name="max_price"]');
-
+            const sidebarTrigger = document.getElementById('sidebar-trigger')
             // Auto-submit form when sort select value changes
             sortSelect.addEventListener('change', () => {
                 form.submit();
@@ -221,6 +246,18 @@
             //         window.location.href = `/shop?${params.toString()}`;
             //     });
             // });
+
+            // Show categories list on mobile
+            sidebarTrigger?.addEventListener('click', (e) => {
+                e.preventDefault();
+                const sidebar = document.getElementById('shop-sidebar')
+                if (sidebar) {
+                    sidebar.classList.toggle('sidebar-active')
+                } else {
+                    console.warn('Sidebar identifier missing')
+                }
+            })
         });
+
     </script>
 @endsection

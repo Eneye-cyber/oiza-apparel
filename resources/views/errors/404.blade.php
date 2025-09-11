@@ -32,9 +32,12 @@
                 </div>
                 <div class="mt-12">
                     <img 
-                        src="{{ asset('/img/404-illustration.webp') }}" 
+                        src="{{ asset('img/404-illustration.jpg') }}" 
                         alt="Fabric roll" 
                         class="mx-auto w-64 h-auto object-contain" 
+                        style="filter:sepia(1)"
+                        width="256"
+                        height="204"
                         loading="lazy">
                 </div>
             </div>

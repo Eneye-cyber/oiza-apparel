@@ -18,8 +18,7 @@
 
                         {{-- Home --}}
                         <li itemprop="itemListElement" itemscope itemtype="https://schema.org/ListItem">
-                            <a itemprop="item" href="/"
-                                class="inline-block pr-2.5 border-r border-cream text-sm opacity-75 hover:opacity-100">
+                            <a itemprop="item" href="/" class="breadcrumb-link breadcrumb-link-divider">
                                 <span itemprop="name">Home</span>
                             </a>
                             <meta itemprop="position" content="1" />
@@ -27,8 +26,7 @@
 
                         {{-- Products --}}
                         <li itemprop="itemListElement" itemscope itemtype="https://schema.org/ListItem">
-                            <a itemprop="item" href="/shop"
-                                class="inline-block pr-2.5 border-r border-cream text-sm opacity-75 hover:opacity-100">
+                            <a itemprop="item" href="/shop" class="breadcrumb-link breadcrumb-link-divider">
                                 <span itemprop="name">Products</span>
                             </a>
                             <meta itemprop="position" content="2" />
@@ -38,24 +36,25 @@
                         @foreach ($breadcrumbs as $index => $breadcrumb)
                             <li itemprop="itemListElement" itemscope itemtype="https://schema.org/ListItem">
                                 <a itemprop="item" href="{{ url('/shop/' . $breadcrumb['slug']) }}"
-                                    class="inline-block pr-2.5 text-sm {{ $index < count($breadcrumbs) - 1 ? 'border-r border-cream opacity-75 hover:opacity-100' : 'font-semibold' }}">
+                                    class="breadcrumb-link {{ $index < count($breadcrumbs) - 1 ? 'breadcrumb-link-divider' : 'breadcrumb-link-active' }}">
                                     <span itemprop="name">{{ $breadcrumb['name'] }}</span>
                                 </a>
                                 <meta itemprop="position" content="{{ $index + 3 }}" />
                             </li>
                         @endforeach
+
                     </ol>
                 </nav>
 
             </div>
         </div>
-        <div class="container py-12">
+        <div class="container py-6 md:py-12">
 
             <section class="flex flex-col flex-between">
                 <div class="flex items-start flex-wrap w-full">
                     <!-- Aside sidebar -->
                     <aside
-                        class="w-full md:w-1/5 md:sticky md:top-14 md:flex flex-col items-start gap-3.5 md:gap-1 mb-5 md:mb-10 md:pr-6 !bg-scroll">
+                        class="hidden w-full md:w-1/5 md:sticky md:top-14 md:flex flex-col items-start gap-3.5 md:gap-1 md:mb-10 md:pr-6 !bg-scroll">
 
 
                         <div class="grid grid-cols-2 sm:grid-cols-3 md:flex flex-col md:gap-4 w-full">
@@ -79,15 +78,15 @@
                             @endif
                         </div>
 
-                        <div class="separator my-6"></div>
+                        <div class="separator my-3 md:my-6"></div>
 
-                        <form id="filter-form" action="" method="GET" class="flex flex-col gap-6 my-4">
+                        <form id="filter-form" action="" method="GET" class="flex flex-col gap-6 md:my-4">
                             @if (request()->has('subcategory'))
                                 <input type="hidden" name="subcategory" value="{{ request()->get('subcategory') }}">
                             @endif
                             <!-- Filters and Sort By Controls -->
                             <!-- Filter: Color Dropdown -->
-                            <div class="flex items-center md:items-start md:flex-col gap-2.5">
+                            <div class="hidden md:flex items-center md:items-start md:flex-col gap-2.5">
                                 <label for="color-filter" class="mr-2 text-sm font-semibold opacity-80">Color:</label>
                                 <select id="color" name="color"
                                     class="bg-white border border-slate-200 py-2 px-3 text-sm rounded hover:bg-black hover:text-white transition">
@@ -105,7 +104,7 @@
                             </div>
 
                             <!-- Filter: Price Range -->
-                            <div class="flex items-center md:items-start md:flex-col gap-2.5">
+                            <div class="hidden md:flex items-center md:items-start md:flex-col gap-2.5">
                                 <label class="text-sm font-semibold opacity-80">Price:</label>
                                 <div class="flex flex-between gap-2">
                                     <input type="number" placeholder="Min" name="min_price"
@@ -127,8 +126,7 @@
                     <!-- listings  -->
                     <div class="w-full md:w-4/5 !bg-scroll">
                         <div class="text-left">
-                            <h2 class="text-6xl leading-[0.9] font-playfair-display capitalize">{{ $category['name'] }}
-                            </h2>
+                            <h2 class="page-title capitalize">{{ $category['name'] }}</h2>
                             <p class="mt-2.5 opacity-80">
                                 {{ $category->description ?? 'Whether casual or formal, find the perfect jewelry for every occasion with us.' }}
                             </p>
