@@ -52,6 +52,7 @@ RUN chown -R www-data:www-data /var/www/html \
 
 # Run setup that doesn’t depend on DB
 RUN php artisan storage:link && \
+    php artisan optimize:clear && \
     php artisan config:cache && \
     php artisan route:cache && \
     php artisan icons:cache && \
