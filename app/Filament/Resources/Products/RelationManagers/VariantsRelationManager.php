@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Filament\Resources\ProductResource\RelationManagers;
+namespace App\Filament\Resources\Products\RelationManagers;
 
 use App\Filament\Resources\Products\Schemas\VariantForm;
 use Filament\Actions\BulkActionGroup;
@@ -17,7 +17,7 @@ use Illuminate\Support\Str;
 use Filament\Schemas\Schema;
 use Filament\Tables\Columns\ImageColumn;
 
-class ProductVariantsRelationManager extends RelationManager
+class VariantsRelationManager extends RelationManager
 {
     protected static string $relationship = 'variants';
 
