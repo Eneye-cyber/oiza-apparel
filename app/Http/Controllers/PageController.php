@@ -309,4 +309,19 @@ class PageController extends Controller
         ];
         return view('pages.shop.category', compact('products', 'category', 'sidebarCategories', 'meta', 'breadcrumbs'));
     }
+
+    public function privacy()
+    {
+        abort(404); // Returns a 404 Not Found response
+    }
+
+    public function terms()
+    {
+        abort(404); // Returns a 404 Not Found response
+    }
+
+    public function sitemap()
+    {
+        abort(404); // Returns a 404 Not Found response
+    }
 }

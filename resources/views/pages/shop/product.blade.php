@@ -20,7 +20,7 @@
                 <!-- Main Image -->
                 <div class="flex items-start justify-start px-3 h-[360px] md:h-auto w-full overflow-hidden">
                   <img id="main-image"
-                       src="{{ asset($product->cover_media) }}"
+                       src="{{ Storage::disk(env('APP_DISK', 'local'))->url($product->cover_media) }}"
                        loading="eager"
                        alt="{{ $product['name'] }}"
                        class="object-contain w-full h-full transition-all duration-300 group-hover:scale-110 group-hover:rotate-6">
@@ -45,9 +45,9 @@
                     <button type="button"
                             class="flex-1 w-full h-42 object-contain thumbnail {{ $index === 0 ? 'border-2 border-gold' : 'cursor-pointer' }}"
                             aria-label="Select image {{ $index + 1 }}"
-                            data-image="{{ asset($image) }}"
+                            data-image="{{ Storage::disk(env('APP_DISK', 'local'))->url($image) }}"
                             data-variant-id="{{ $variant->id ?? '' }}">
-                      <img src="{{ asset($image) }}"
+                      <img src="{{ Storage::disk(env('APP_DISK', 'local'))->url($image) }}"
                            loading="lazy"
                            alt="{{ $product->name }}"
                            class="object-scale w-auto h-full transition-all duration-300 group-hover:scale-110 group-hover:rotate-6">

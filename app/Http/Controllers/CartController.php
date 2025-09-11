@@ -8,6 +8,8 @@ use App\Models\Products\Product;
 use App\Services\CartService;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\JsonResponse;
+use Illuminate\Support\Facades\Storage;
+use Illuminate\Support\Facades\Log;
 
 class CartController extends Controller
 {
@@ -20,18 +22,36 @@ class CartController extends Controller
 
     public function index(): JsonResponse
     {
-        $cart = $this->cartService->getCart()->load('items.product');
+        $cart = $this->cartService->getCart()->load([
+            'items.product' => function ($query) {
+                $query->select('id', 'cover_media', 'name', 'category_id', 'main_color');
+            },
+            'items.product.category' => function ($query) {
+                $query->select('id', 'name');
+            },
+        ]);
+
+        // Transform cover_media for each item
+        $items = $cart->items->map(function ($item) {
+            $item->product->cover_media = $item->product->cover_media
+                ? Storage::disk(env('APP_DISK', 'local'))->url($item->product->cover_media)
+                : null;
+            Log::info($item);
+            return $item;
+        });
+
         return response()->json([
-            'items' => $cart->items,
-            'subtotal' => $cart->items->sum(fn($i) => $i->price * $i->quantity),
-            'count' => $cart->items->count()
+            'items' => $items,
+            'subtotal' => $items->sum(fn($i) => $i->price * $i->quantity),
+            'count' => $items->count()
         ]);
     }
 
-    public function add($productId): JsonResponse
+    public function add(Request $request, $productId): JsonResponse
     {
+        $qty = $request->input('quantity', 1);
         $product = Product::findOrFail($productId);
-        $this->cartService->addItem($product, 1);
+        $this->cartService->addItem($product, $qty);
 
         return $this->index();
     }
