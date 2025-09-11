@@ -21,6 +21,12 @@ php artisan config:cache
 echo "Caching route"
 php artisan route:cache
 
+echo "Caching icons"
+php artisan icons:cache
+
+echo "Caching filament components"
+php artisan filament:cache-components
+
 echo "Caching view"
 php artisan view:cache
 
