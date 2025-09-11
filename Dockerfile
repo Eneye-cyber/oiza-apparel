@@ -31,7 +31,7 @@ RUN chown -R www-data:www-data /var/www/html \
     && chmod -R 775 /var/www/html/storage /var/www/html/bootstrap/cache
 
 # Copy configs
-COPY ./conf/nginx/nginx-site.conf /etc/nginx/nginx.conf
+COPY ./conf/nginx/nginx-site.conf /etc/nginx/conf.d/default.conf
 COPY ./conf/supervisord.conf /etc/supervisor/conf.d/supervisord.conf
 
 # Expose port 80
