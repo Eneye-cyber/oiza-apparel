@@ -63,6 +63,7 @@ RUN chown -R www-data:www-data /var/www/html \
 #     php artisan event:cache
 
 # Copy configs
+RUN rm -f /etc/nginx/conf.d/default.conf
 COPY ./conf/nginx/nginx-site.conf /etc/nginx/conf.d/default.conf
 COPY ./conf/supervisord.conf /etc/supervisor/conf.d/supervisord.conf
 
