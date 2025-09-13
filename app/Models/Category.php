@@ -85,6 +85,17 @@ class Category extends Model
     }
 
     /**
+     * Get all products count from this category and all descendant categories
+     */
+    public function getAllProductsCount(): int
+    {
+        $categoryIds = $this->getAllDescendantIds();
+        $categoryIds[] = $this->id;
+
+        return Product::whereIn('category_id', $categoryIds)->count();
+    }
+
+    /**
      * Get all descendant category IDs (including nested children)
      */
     public function getAllDescendantIds(): array

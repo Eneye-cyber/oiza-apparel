@@ -2,7 +2,10 @@
 
 namespace App\Filament\Resources\Categories\Tables;
 
+use App\Models\Category;
+use Filament\Actions\ActionGroup;
 use Filament\Actions\BulkActionGroup;
+use Filament\Actions\DeleteAction;
 use Filament\Actions\DeleteBulkAction;
 use Filament\Actions\EditAction;
 use Filament\Actions\ViewAction;
@@ -22,6 +25,16 @@ class CategoriesTable
                 TextColumn::make('parent.name')
                     ->searchable(),
 
+                TextColumn::make('products_count')
+                    ->label('Product Count')
+                    ->getStateUsing(fn (Category $record) => $record->getAllProductsCount())
+                    ->color(fn ($state) => $state === 0 ? 'danger' : 'gray')
+                    ->numeric()
+                    ->icon('heroicon-o-shopping-bag'),
+                    // ->counts('products')
+
+
+                ToggleColumn::make('is_active')->label('Show Category'),
                 TextColumn::make('created_at')
                     ->dateTime()
                     ->sortable()
@@ -34,18 +47,20 @@ class CategoriesTable
                     ->numeric()
                     ->sortable()
                     ->toggleable(),
-                ToggleColumn::make('is_active')->label('Show Category'),
             ])
             ->filters([
                 //
             ])
             ->recordActions([
                 ViewAction::make(),
-                EditAction::make(),
+                ActionGroup::make([
+                    EditAction::make(),
+                    DeleteAction::make()->requiresConfirmation()
+                ])
             ])
             ->toolbarActions([
                 BulkActionGroup::make([
-                    DeleteBulkAction::make(),
+                    DeleteBulkAction::make()->requiresConfirmation(),
                 ]),
             ])->defaultSort('parent_id', direction: 'desc');
     }
