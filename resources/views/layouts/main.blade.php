@@ -47,7 +47,7 @@
     @else
         <link rel="stylesheet" href="{{ asset('/fallback.css') }}">
     @endif
-      <link rel="stylesheet" href="{{ asset('styles/aos.css') }}" />
+    <link rel="stylesheet" href="{{ asset('styles/aos.css') }}" />
     @yield('head')
 </head>
 
@@ -137,9 +137,32 @@
         </div>
     </footer>
 
-    <script>
-  
-    </script>
+    <!-- Floating WhatsApp Chat Button -->
+    <div class="fixed bottom-2.5 sm:bottom-5 right-2.5 sm:right-5 z-50">
+        <a href="https://wa.me/2348034602165?text=Hello%20Oiza%20Apparels%2C%20I%20have%20a%20question" 
+           target="_blank"
+           id="whatsapp-chat" 
+           rel="noopener noreferrer" 
+           class="whatsapp-button animate-pulse flex items-center justify-center bg-[#25D366] text-white p-3 rounded-full shadow-lg hover:bg-[#128C7E] transition-colors"
+           aria-label="Chat with us on WhatsApp">
+            <x-ionicon-logo-whatsapp class="size-6 sm:size-8" aria-hidden="true" />
+        </a>
+    </div>
+
+    {{-- <div class="fixed bottom-5 right-5 z-50">
+        <button id="whatsapp-toggle"
+            class=" flex items-center justify-center bg-[#25D366] text-white p-3 rounded-full shadow-lg hover:bg-[#128C7E] transition-colors"
+            aria-label="Toggle WhatsApp Chat">
+            <x-ionicon-logo-whatsapp class="size-8" aria-hidden="true" />
+        </button>
+        <div id="whatsapp-chat" class="hidden bg-white p-4 rounded-lg shadow-lg absolute bottom-16 right-0 w-64">
+            <p class="text-sm mb-2">Need help? Chat with us!</p>
+            <a href="https://wa.me/{{ config('app.whatsapp_number') }}?text=Hello%20Oiza%20Apparels%2C%20I%20have%20a%20question"
+                class="text-[#25D366] underline" target="_blank" rel="noopener noreferrer">Start WhatsApp Chat</a>
+        </div>
+    </div> --}}
+
+
 
     <script src="{{ asset('js/main.js') }}"></script>
 
@@ -149,7 +172,5 @@
     </script>
     @yield('scripts')
 </body>
-
-
 
 </html>
