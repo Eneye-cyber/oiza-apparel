@@ -13,6 +13,7 @@ use App\Filament\Resources\Products\Tables\ProductsTable;
 use App\Filament\Resources\Products\Widgets\ProductOverview;
 use App\Models\Products\Product;
 use BackedEnum;
+use UnitEnum;
 use Filament\Resources\Resource;
 use Filament\Schemas\Schema;
 use Filament\Support\Icons\Heroicon;
@@ -26,6 +27,9 @@ class ProductResource extends Resource
     protected static string|BackedEnum|null $navigationIcon = Heroicon::ShoppingBag;
 
     protected static ?string $recordTitleAttribute = 'name';
+
+    protected static string | UnitEnum | null $navigationGroup = 'Shop';
+
 
     public static function form(Schema $schema): Schema
     {

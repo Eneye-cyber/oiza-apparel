@@ -9,6 +9,7 @@ use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Database\Eloquent\Relations\HasManyThrough;
 use App\Models\Products\Product;
+use Illuminate\Support\Facades\Storage;
 
 class Category extends Model
 {
@@ -70,7 +71,7 @@ class Category extends Model
     // Helper to get image URL
     public function getImageUrlAttribute(): ?string
     {
-        return $this->image ? asset('storage/' . $this->image) : null;
+        return $this->image ? Storage::disk(env('APP_DISK', 'local'))->url($this->image) : null;
     }
     /**
      * Get all products from this category and all descendant categories
