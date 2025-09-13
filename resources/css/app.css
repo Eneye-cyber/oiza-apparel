@@ -189,4 +189,21 @@
     .promo-image {
         @apply max-sm:max-w-48 lg:max-w-64 lg:w-full lg:-mr-8 transition-all duration-300 ml-auto;
     }
+
+    .whatsapp-button {
+        position: relative;
+    }
+    .whatsapp-button:hover::after {
+        content: "Chat with us on WhatsApp";
+        position: absolute;
+        bottom: 100%;
+        right: 0;
+        background: #333;
+        color: #fff;
+        padding: 5px 10px;
+        border-radius: 4px;
+        font-size: 12px;
+        white-space: nowrap;
+    }
+
 }

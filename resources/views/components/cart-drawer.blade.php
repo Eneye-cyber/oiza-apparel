@@ -1,4 +1,4 @@
-<section class="cart transition-all duration-300 fixed inset-0 z-50 flex justify-end items-stretch bg-black/50"
+<section class="cart transition-all duration-300 fixed inset-0 z-50 h-svh overflow-clip flex justify-end items-stretch bg-black/50"
     id="cart-overlay">
     <aside class="w-full max-w-[480px] h-svh bg-white shadow-xl flex flex-col transition-all duration-300"
         id="cart-container" aria-label="Shopping cart">
