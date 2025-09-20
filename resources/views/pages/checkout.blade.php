@@ -152,7 +152,8 @@
 
                 <div class="relative ">
                   <select id="country" name="country" class="floating-select peer" autocomplete="country-name" required>
-                    <option value="Nigeria">Nigeria</option>
+                    <option value="">Select Country</option>
+
                     <!-- Add options as needed -->
                   </select>
                   <label for="country" class="floating-label-select floating-label absolute">Country *</label>
@@ -209,15 +210,9 @@
               {{-- Shipping Method Selection --}}
               <section class="mb-8">
                 <h2 class="text-lg text-black font-semibold mb-4">Shipping Method</h2>
-                <div class="space-y-4">
-                  <div class="flex items-center">
-                    <input type="radio" id="standard_shipping" name="shipping_method" value="standard" class="mr-2" checked>
-                    <label for="standard_shipping" class="text-sm">Standard Shipping (3-5 business days) - Free</label>
-                  </div>
-                  <div class="flex items-center">
-                    <input type="radio" id="express_shipping" name="shipping_method" value="express" class="mr-2">
-                    <label for="express_shipping" class="text-sm">Express Shipping (1-2 business days) - ₦5,000</label>
-                  </div>
+                <div class="space-y-4" id="shipping_methods">
+                  <p class="text-sm text-black opacity-60">Select your shipping method based on your location.</p>
+                  {{-- Shipping methods will be populated here based on selected country --}}
                 </div>
               </section>
 
@@ -231,7 +226,7 @@
                 <div id="billing_fields" class="space-y-4 hidden">
                   <div class="relative ">
                     <select id="billing_country" name="billing_country" class="floating-select peer" autocomplete="billing country-name" required>
-                      <option value="">Nigeria</option>
+                      <option value="">Select country</option>
                       <!-- Add options as needed -->
                     </select>
                     <label for="billing_country" class="floating-label-select floating-label absolute">Country *</label>
@@ -368,7 +363,7 @@
                   </div>
                   <div class="flex justify-between text-sm">
                     <span class="text-black opacity-60">Shipping</span>
-                    <span class="text-accent font-medium">Free</span>
+                    <span class="text-accent font-medium" id="shipping_fee">TBD</span>
                   </div>
 
                   <hr class="my-4 border-t border-black/10" />
@@ -408,15 +403,8 @@
   </main>
 
   <!-- Simple JS for toggles (e.g., create account, billing same as shipping) -->
-  <script>
-    document.getElementById('create_account').addEventListener('change', function() {
-      document.getElementById('password_fields').classList.toggle('hidden', !this.checked);
-    });
+  <script src="{{ asset('js/checkout.js') }}" defer></script>
 
-    document.getElementById('billing_same_as_shipping').addEventListener('change', function() {
-      document.getElementById('billing_fields').classList.toggle('hidden', this.checked);
-    });
-  </script>
 
 </body>
 

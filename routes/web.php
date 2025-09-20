@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\ApiController;
 use App\Http\Controllers\ContactController;
 use App\Http\Controllers\PageController;
 use Illuminate\Support\Facades\Route;
@@ -26,6 +27,8 @@ Route::prefix('cart')->group(function () {
 });
 
 
+
+
 Route::get('/', [PageController::class, 'home'])->name('home');
 Route::get('/shop', [PageController::class, 'shop'])->name('shop');
 
@@ -50,3 +53,8 @@ Route::get('/checkout', [CheckoutController::class, 'index'])->name('checkout');
 Route::get('/privacy', [PageController::class, 'privacy'])->name('privacy');
 Route::get('/terms', [PageController::class, 'terms'])->name('terms');
 Route::get('/sitemap', [PageController::class, 'sitemap'])->name('sitemap');
+
+Route::prefix('v1')->group(function () {
+  Route::get('/countries/{code?}', [ApiController::class, 'countries'])->name('country.index');
+  Route::get('/shipping/{type}/{id}', [ApiController::class, 'shipping'])->name('shipping.index');
+});
