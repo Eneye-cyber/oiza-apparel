@@ -26,9 +26,9 @@
                 <span class="text-base opacity-90 tracking-wide">Subtotal</span>
                 <span id="cart-subtotal" class="text-base font-semibold tracking-wider">₦0</span>
             </div>
-            <button class="w-full bg-primary text-white py-3 text-center font-semibold tracking-wide">
+            <a rel="nofollow" href="{{ route('checkout') }}" class="inline-block w-full bg-primary text-white py-3 text-center font-semibold tracking-wide">
                 Continue to Checkout
-            </button>
+            </a>
         </footer>
     </aside>
 </section>

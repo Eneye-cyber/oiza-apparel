@@ -10,6 +10,7 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
+use Illuminate\Support\Facades\Storage;
 
 class Product extends Model
 {
@@ -40,7 +41,7 @@ class Product extends Model
     //     'rating',
     // ];
     protected $guarded = [];
-
+    
     protected $casts = [
         'media' => 'array',
         'tags' => 'array',
@@ -57,6 +58,18 @@ class Product extends Model
         'status' => ProductStatus::class,
         'order_type' => OrderType::class,
     ];
+
+    // ensures that cover_media_url is automatically included when you access the model as an array/JSON 
+    protected $appends = ['cover_media_url'];
+    // defines a computed attribute
+    public function getCoverMediaUrlAttribute()
+    {
+        return $this->cover_media
+            ? Storage::disk(env('APP_DISK', 'local'))->url($this->cover_media)
+            : null;
+    }
+
+    
 
 
     public function category(): BelongsTo
