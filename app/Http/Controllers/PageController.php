@@ -305,7 +305,7 @@ class PageController extends Controller
         $meta = [
             'title' => $category->meta_title ?? $category->name . ' Products',
             'description' => $category->meta_description ?? $category->description ?? 'Browse our selection of ' . Str::lower($category->name) . ' products.',
-            'keywords' => $category->meta_keywords ?? implode(', ', $segments) . ', products, shop',
+            'keywords' => $category->meta_keywords ? implode(', ', $category->meta_keywords) : implode(', ', $segments) . ', products, shop',
         ];
         return view('pages.shop.category', compact('products', 'category', 'sidebarCategories', 'meta', 'breadcrumbs'));
     }
