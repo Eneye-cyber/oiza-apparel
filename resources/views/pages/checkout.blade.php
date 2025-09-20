@@ -403,8 +403,7 @@
   </main>
 
   <!-- Simple JS for toggles (e.g., create account, billing same as shipping) -->
-  <script src="{{ asset('js/checkout.js') }}" defer></script>
-
+  @vite('resources/js/checkout.js')
 
 </body>
 
