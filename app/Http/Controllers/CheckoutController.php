@@ -2,20 +2,29 @@
 
 namespace App\Http\Controllers;
 
+use App\Enums\OrderStatus;
+use App\Enums\PaymentMethod;
+use App\Enums\PaymentStatus;
+use App\Http\Requests\StoreOrderRequest;
+use App\Models\Orders\Order;
+use App\Models\Shipping\ShippingState;
 use Illuminate\Http\Request;
 use App\Services\CartService;
-use Illuminate\Support\Facades\Storage;
+use App\Services\OrderService;
 use Illuminate\Support\Facades\Log;
+use Illuminate\Support\Facades\DB;
 
 
 class CheckoutController extends Controller
 {
     //
     protected CartService $cartService;
+    protected OrderService $orderService;
 
-    public function __construct(CartService $cartService)
+    public function __construct(CartService $cartService, OrderService $orderService)
     {
         $this->cartService = $cartService;
+        $this->orderService = $orderService;
     }
 
     public function index()
@@ -32,33 +41,39 @@ class CheckoutController extends Controller
         // No need to map for URL conversion anymore
         $cartItems = $cart->items;
         $subtotal = $cartItems->sum(fn($i) => $i->price * $i->quantity);
+        if ($cartItems->isEmpty()) {
+            return redirect()->route('shop')->with('error', 'Your cart is empty.');
+        }
 
         return view('pages.checkout', compact('cartItems', 'subtotal'));
     }
 
-    public function store(Request $request)
+
+    public function store(StoreOrderRequest $request)
     {
-        // Validate and process the checkout form submission
-        $validatedData = $request->validate([
-            'email' => 'required|email',
-            'phone' => 'required|string|max:15',
-            'first_name' => 'required|string|max:50',
-            'last_name' => 'required|string|max:50',
-            'address' => 'required|string|max:255',
-            'city' => 'required|string|max:100',
-            'state' => 'required|string|max:100',
-            'zip' => 'required|string|max:20',
-            'country' => 'required|string|max:100',
-            'create_account' => 'sometimes|boolean',
-            'password' => 'required_if:create_account,1|string|min:8|confirmed',
-            'terms_agreement' => 'accepted',
+        $validated = $request->validated();
+
+        $cart = $this->cartService->getCart()->load([
+            'items.product:id',
+            'items.product.category:id',
         ]);
 
-        // Process payment and order creation logic here
+        try {
+            $order = $this->orderService->createFromCart($validated, $cart->items);
 
-        // For now, just log the validated data
-        Log::info('Checkout data:', $validatedData);
+            Log::info('Order placed successfully', [
+                'order_id' => $order->id,
+                'total'    => $order->total,
+                'items'    => $order->items()->count(),
+            ]);
 
-        return redirect()->route('checkout.success');
+            return redirect()->route('checkout')->with('success', 'Order placed successfully!');
+        } catch (\Throwable $th) {
+            Log::error('Order creation failed', [
+                'error' => $th->getMessage(),
+                'trace' => $th->getTraceAsString(),
+            ]);
+            return redirect()->route('checkout')->with('error', 'Something went wrong. Please try again.');
+        }
     }
 }

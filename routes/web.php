@@ -45,6 +45,7 @@ Route::post('/contact', [ContactController::class, 'submit'])->name('contact.sub
 
 // Contact Route
 Route::get('/checkout', [CheckoutController::class, 'index'])->name('checkout');
+Route::post('/checkout', [CheckoutController::class, 'store'])->name('checkout.store');
 
 // Cart Route
 // Route::get('/cart', [PageController::class, 'index'])->name('cart');
