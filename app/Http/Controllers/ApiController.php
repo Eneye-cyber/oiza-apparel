@@ -14,6 +14,7 @@ class ApiController extends Controller
     if ($code) {
       // Fetch specific country with states and methods
       $country = ShippingCountry::where('code', '=', $code)
+  
         ->with([
           'states:name,id,is_active,country_id',
           'methods' => function ($query) {
@@ -26,7 +27,7 @@ class ApiController extends Controller
               }]);
           }
         ])
-        ->first();
+        ->first()->withActiveMethods();
 
       Log::info('Fetching country with code: ', [$code, $country]);
 
@@ -57,7 +58,7 @@ class ApiController extends Controller
               }]);
           }
         ])
-        ->first();
+        ->first()->withActiveMethods();
 
       Log::info('Fetching country with code: ', [$id, $state]);
 

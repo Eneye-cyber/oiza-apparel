@@ -12,7 +12,7 @@ class ShippingState extends Model
     use HasFactory;
 
     protected $fillable = ['country_id', 'code', 'name', 'is_active'];
-    protected $appends = ['active_methods'];
+    // protected $appends = ['active_methods'];
 
     public function country()
     {
@@ -28,6 +28,7 @@ class ShippingState extends Model
     {
         $methods = $this->methods->map(function ($stateMethod) {
             return [
+                'id' => $stateMethod->id,
                 'name' => $stateMethod->method->name,
                 'delivery_cost' => $stateMethod->delivery_cost,
                 'free_shipping_minimum' => $stateMethod->free_shipping_minimum,
@@ -42,4 +43,31 @@ class ShippingState extends Model
         return $methods;
     }
 
+    public function withActiveMethods()
+    {
+        return $this->append('active_methods');
+    }
+    
+    public function findMethodByIdDirect($methodId)
+    {
+        $method = $this->methods()
+            ->where('id', $methodId)
+            ->with('method')
+            ->first();
+
+        if ($method) {
+            return [
+                'name' => $method->method->name,
+                'delivery_cost' => $method->delivery_cost,
+                'free_shipping_minimum' => $method->free_shipping_minimum,
+                'delivery_min_days' => $method->delivery_min_days,
+                'delivery_max_days' => $method->delivery_max_days,
+            ];
+        }
+
+        // fallback to country-level methods
+        return $this->country
+            ? $this->country->findMethodById($methodId)
+            : null;
+    }
 }
