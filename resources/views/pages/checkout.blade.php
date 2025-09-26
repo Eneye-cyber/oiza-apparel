@@ -41,10 +41,11 @@
 
       {{-- Checkout Page Content --}}
       <div class="mx-auto px-4">
+
         <div class="grid grid-cols-1 md:grid-cols-5 gap-8">
           {{-- Left: Checkout Form --}}
           <section class="md:col-span-3 flex h-full py-8">
-            <div class="ml-auto max-w-xl w-full h-full">
+            <div class="mr-auto ml-auto md:mr-0 max-w-xl w-full h-full">
               <header class="space-y-2">
                 <h2>
                   <a href="/"
@@ -80,7 +81,7 @@
 
                         {{-- Cart --}}
                         <li itemprop="itemListElement" itemscope itemtype="https://schema.org/ListItem">
-                          <a itemprop="item" href="{{ Route::has('cart') ? route('cart') : '#'}}"
+                          <a itemprop="item" href="{{ Route::has('cart') ? route('cart') : '#' }}"
                             class="text-xs text-black opacity-80 flex gap-2.5 items-center">
                             <span itemprop="name">Cart</span>
                             <x-heroicon-o-chevron-right class="h-3 w-auto" />
@@ -103,220 +104,252 @@
                 </div>
 
               </header>
-              {{-- <h1 class="text-3xl font-bold mb-6">Checkout</h1> --}}
 
-              {{-- Guest vs. Account Creation --}}
-              <section class="mb-4">
-                <h2 class="text-lg text-black font-semibold mb-4">Account Information</h2>
-                <div class="space-y-4">
-                  <p class="text-sm text-black opacity-80">Already have an account? <a href="{{ Route::has('login') ? route('login') : '#'}}" class="text-primary hover:underline">Sign in</a> for faster checkout.</p>
-                  <p class="text-sm text-black opacity-80">Or continue as a guest.</p>
-                </div>
-              </section>
+              <form action="{{ route('checkout.store') }}" method="POST" id="checkout-form">
+                @csrf
 
-              {{-- Contact Information & Account Creation --}}
-              <section class="mb-8">
-                <h2 class="text-lg text-black font-semibold mb-4">Contact Information</h2>
-                <div class="space-y-4 ">
-                  <div class="relative">
-                    <input type="email" id="email" name="email" placeholder="" class="floating-input peer" autocomplete="email" required>
-                    <label for="email" class="floating-label-input floating-label absolute !peer-not-placeholder-shown:top-[-0.5rem]">Email address *</label>
-                  </div>
-                  <div class="relative">
-                    <input type="tel" id="phone" name="phone" placeholder="" class="floating-input peer" autocomplete="tel" required>
-                    <label for="phone" class="floating-label-input floating-label absolute">Phone *</label>
-                  </div>
-
-                  {{-- Account creation --}}
-
-                  <div class="flex items-center">
-                    <input type="checkbox" id="create_account" name="create_account" class="mr-2">
-                    <label for="create_account" class="text-sm">Create an account to save your details for future purchases.</label>
-                  </div>
-                  <div id="password_fields" class="space-y-4 hidden">
+                {{-- Contact Information & Account Creation --}}
+                <section class="mb-8">
+                  <h2 class="text-lg text-black font-semibold ">Contact Information</h2>
+                  <p class="text-sm text-black opacity-80">Already have an account? 
+                    <a href="{{ Route::has('login') ? route('login') : '#' }}" class="text-primary hover:underline">Sign in</a> for faster checkout.
+                  </p>
+                  <div class="space-y-4 mt-6">
                     <div class="relative">
-                      <input type="password" id="password" name="password" placeholder="" class="floating-input peer">
-                      <label for="password" class="floating-label-input floating-label absolute">Password</label>
+                      <input type="email" id="email" name="email" placeholder="" class="floating-input peer"
+                        value="{{ old('email') }}"
+                        autocomplete="email" required>
+                      <label for="email"
+                        class="floating-label-input floating-label absolute !peer-not-placeholder-shown:top-[-0.5rem]">Email
+                        address *</label>
                     </div>
                     <div class="relative">
-                      <input type="password" id="password_confirmation" name="password_confirmation" placeholder="" class="floating-input peer">
-                      <label for="password_confirmation" class="floating-label-input floating-label absolute">Confirm Password</label>
+                      <input type="tel" id="phone" name="phone" placeholder="" class="floating-input peer"
+                        value="{{ old('phone') }}"
+                        autocomplete="tel" required>
+                      <label for="phone" class="floating-label-input floating-label absolute">Phone *</label>
                     </div>
                   </div>
-                </div>
-              </section>
+                </section>
 
-              {{-- Shipping Address --}}
-              <section class="mb-8">
-                <h2 class="text-lg text-black font-semibold mb-4">Shipping Address</h2>
+                {{-- Shipping Address --}}
+                <section class="mb-8">
+                  <h2 class="text-lg text-black font-semibold mb-4">Shipping Address</h2>
 
-                <div class="relative ">
-                  <select id="country" name="country" class="floating-select peer" autocomplete="country-name" required>
-                    <option value="">Select Country</option>
-
-                    <!-- Add options as needed -->
-                  </select>
-                  <label for="country" class="floating-label-select floating-label absolute">Country *</label>
-                </div>
-
-                <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mt-4">
-                  <div class="relative">
-                    <input type="text" id="first_name" name="first_name" class="floating-input peer"
-                      placeholder=" " autocomplete="given-name" required />
-                    <label for="first_name" class="floating-label-input floating-label absolute">First Name *</label>
-                  </div>
-                  <div class="relative">
-                    <input type="text" id="last_name" name="last_name" class="floating-input peer"
-                      placeholder=" " autocomplete="family-name" required />
-                    <label for="last_name" class="floating-label-input floating-label absolute">Last Name *</label>
-                  </div>
-                </div>
-
-
-                <div class="relative mt-4">
-                  <input type="text" id="address" name="address" class="floating-input peer"
-                    placeholder=" " autocomplete="street-address" required />
-                  <label for="address" class="floating-label-input floating-label absolute">Address *</label>
-                </div>
-                <div class="relative mt-4">
-                  <input type="text" id="apartment" name="apartment" class="floating-input peer"
-                    placeholder=" " autocomplete="address-line2" />
-                  <label for="apartment" class="floating-label-input floating-label absolute">Apartment, suite, etc.
-                    (optional)</label>
-                </div>
-                <div class="grid grid-cols-1 md:grid-cols-3 gap-4 mt-4">
-                  <div class="relative">
-                    <input type="text" id="city" name="city" class="floating-input peer"
-                      placeholder=" " autocomplete="address-level2" required />
-                    <label for="city" class="floating-label-input floating-label absolute">City *</label>
-                  </div>
-                  <div class="relative">
-                    <select id="state" name="state" class="floating-select peer" autocomplete="address-level1" required>
-                      <option value=""></option>
-                      <!-- Add options as needed -->
-                    </select>
-                    <label for="state" class="floating-label-select floating-label absolute">State *</label>
-                  </div>
-                  <div class="relative">
-                    <input type="text" id="zip" name="zip" class="floating-input peer"
-                      placeholder=" " autocomplete="postal-code" required />
-                    <label for="zip" class="floating-label-input floating-label absolute">ZIP
-                      Code *</label>
-                  </div>
-                </div>
-
-              </section>
-
-              {{-- Shipping Method Selection --}}
-              <section class="mb-8">
-                <h2 class="text-lg text-black font-semibold mb-4">Shipping Method</h2>
-                <div class="space-y-4" id="shipping_methods">
-                  <p class="text-sm text-black opacity-60">Select your shipping method based on your location.</p>
-                  {{-- Shipping methods will be populated here based on selected country --}}
-                </div>
-              </section>
-
-              {{-- Billing Address --}}
-              <section class="mb-8">
-                <h2 class="text-lg text-black font-semibold mb-4">Billing Address</h2>
-                <div class="flex items-center mb-4">
-                  <input type="checkbox" id="billing_same_as_shipping" name="billing_same_as_shipping" class="mr-2" checked>
-                  <label for="billing_same_as_shipping" class="text-sm">Same as shipping address</label>
-                </div>
-                <div id="billing_fields" class="space-y-4 hidden">
                   <div class="relative ">
-                    <select id="billing_country" name="billing_country" class="floating-select peer" autocomplete="billing country-name" required>
-                      <option value="">Select country</option>
-                      <!-- Add options as needed -->
+                    <select id="country" name="country" class="floating-select peer" autocomplete="country-name" required
+                      data-old="{{ old('country') }}">
+                      <option value="">Select Country</option>
+                      <!-- Options loaded dynamically by JS -->
                     </select>
-                    <label for="billing_country" class="floating-label-select floating-label absolute">Country *</label>
+                    <label for="country" class="floating-label-select floating-label absolute">Country *</label>
                   </div>
 
-                  <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                  <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mt-4">
                     <div class="relative">
-                      <input type="text" id="billing_first_name" name="billing_first_name" class="floating-input peer"
-                        placeholder=" " autocomplete="billing given-name" required />
-                      <label for="billing_first_name" class="floating-label-input floating-label absolute">First Name *</label>
+                      <input type="text" id="first_name" name="first_name" class="floating-input peer"
+                        placeholder=" " value="{{ old('first_name') }}"
+                        autocomplete="given-name" required />
+                      <label for="first_name" class="floating-label-input floating-label absolute">First Name *</label>
                     </div>
                     <div class="relative">
-                      <input type="text" id="billing_last_name" name="billing_last_name" class="floating-input peer"
-                        placeholder=" " autocomplete="billing family-name" required />
-                      <label for="billing_last_name" class="floating-label-input floating-label absolute">Last Name *</label>
+                      <input type="text" id="last_name" name="last_name" class="floating-input peer"
+                        placeholder=" " value="{{ old('last_name') }}"
+                        autocomplete="family-name" required />
+                      <label for="last_name" class="floating-label-input floating-label absolute">Last Name *</label>
                     </div>
                   </div>
 
-
-                  <div class="relative">
-                    <input type="text" id="billing_address" name="billing_address" class="floating-input peer"
-                      placeholder=" " autocomplete="billing street-address" required />
-                    <label for="billing_address" class="floating-label-input floating-label absolute">Address *</label>
+                  <div class="relative mt-4">
+                    <input type="text" id="address" name="address" class="floating-input peer" placeholder=" "
+                      value="{{ old('address') }}"
+                      autocomplete="street-address" required />
+                    <label for="address" class="floating-label-input floating-label absolute">Address *</label>
                   </div>
-                  <div class="relative">
-                    <input type="text" id="billing_apartment" name="billing_apartment" class="floating-input peer"
-                      placeholder=" " autocomplete="billing address-line2" />
-                    <label for="billing_apartment" class="floating-label-input floating-label absolute">Apartment, suite, etc.
+                  <div class="relative mt-4">
+                    <input type="text" id="apartment" name="apartment" class="floating-input peer" placeholder=" "
+                      value="{{ old('apartment') }}"
+                      autocomplete="address-line2" />
+                    <label for="apartment" class="floating-label-input floating-label absolute">Apartment, suite, etc.
                       (optional)</label>
                   </div>
-                  <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+                  <div class="grid grid-cols-1 md:grid-cols-3 gap-4 mt-4">
                     <div class="relative">
-                      <input type="text" id="billing_city" name="billing_city" class="floating-input peer"
-                        placeholder=" " autocomplete="billing address-level2" required />
-                      <label for="billing_city" class="floating-label-input floating-label absolute">City *</label>
+                      <input type="text" id="city" name="city" class="floating-input peer" placeholder=" "
+                        value="{{ old('city') }}"
+                        autocomplete="address-level2" required />
+                      <label for="city" class="floating-label-input floating-label absolute">City *</label>
                     </div>
                     <div class="relative">
-                      <select id="billing_state" name="billing_state" class="floating-select peer" autocomplete="billing address-level1" required>
+                      <select id="state" name="state" class="floating-select peer" autocomplete="address-level1" required
+                        data-old="{{ old('state') }}">
                         <option value=""></option>
-                        <!-- Add options as needed -->
+                        <!-- Options loaded dynamically by JS -->
                       </select>
-                      <label for="billing_state" class="floating-label-select floating-label absolute">State *</label>
+                      <label for="state" class="floating-label-select floating-label absolute">State *</label>
                     </div>
                     <div class="relative">
-                      <input type="text" id="billing_zip" name="billing_zip" class="floating-input peer"
-                        placeholder=" " autocomplete="billing postal-code" required />
-                      <label for="billing_zip" class="floating-label-input floating-label absolute">ZIP
-                        Code *</label>
+                      <input type="text" id="zip" name="zip" class="floating-input peer" placeholder=" "
+                        value="{{ old('zip') }}"
+                        autocomplete="postal-code" />
+                      <label for="zip" class="floating-label-input floating-label absolute">ZIP
+                        Code</label>
                     </div>
                   </div>
+                </section>
+
+                {{-- Shipping Method Selection --}}
+                <section class="mb-8">
+                  <h2 class="text-lg text-black font-semibold mb-4">Shipping Method</h2>
+                  <div class="space-y-4" id="shipping_methods">
+                    <p class="text-sm text-black opacity-60">Select your shipping method based on your location.</p>
+                    {{-- Shipping methods will be populated here based on selected country --}}
+                  </div>
+                </section>
+
+                {{-- Billing Address --}}
+                <section class="mb-8">
+                  <h2 class="text-lg text-black font-semibold mb-4">Billing Address</h2>
+                  <div class="flex items-center mb-4">
+                    <input type="hidden" name="billing_same_as_shipping" value="0">
+                    <input type="checkbox" id="billing_same_as_shipping" name="billing_same_as_shipping"
+                      class="mr-2" value="1" {{ old('billing_same_as_shipping', 1) ? 'checked' : '' }}>
+                    <label for="billing_same_as_shipping" class="text-sm">Same as shipping address</label>
+                  </div>
+                  <div id="billing_fields" class="space-y-4 hidden">
+                    <div class="relative ">
+                      <select id="billing_country" name="billing_country" class="floating-select peer"
+                        autocomplete="billing country-name"
+                        data-old="{{ old('billing_country') }}">
+                        <option value="">Select country</option>
+                        <!-- Options loaded dynamically by JS -->
+                      </select>
+                      <label for="billing_country" class="floating-label-select floating-label absolute">Country
+                        *</label>
+                    </div>
+
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                      <div class="relative">
+                        <input type="text" id="billing_first_name" name="billing_first_name"
+                          class="floating-input peer" placeholder=" " value="{{ old('billing_first_name') }}"
+                          autocomplete="billing given-name" />
+                        <label for="billing_first_name" class="floating-label-input floating-label absolute">First Name
+                          *</label>
+                      </div>
+                      <div class="relative">
+                        <input type="text" id="billing_last_name" name="billing_last_name"
+                          class="floating-input peer" placeholder=" " value="{{ old('billing_last_name') }}"
+                          autocomplete="billing family-name" />
+                        <label for="billing_last_name" class="floating-label-input floating-label absolute">Last Name
+                          *</label>
+                      </div>
+                    </div>
+
+                    <div class="relative">
+                      <input type="text" id="billing_address" name="billing_address" class="floating-input peer"
+                        placeholder=" " value="{{ old('billing_address') }}"
+                        autocomplete="billing street-address" />
+                      <label for="billing_address" class="floating-label-input floating-label absolute">Address
+                        *</label>
+                    </div>
+                    <div class="relative">
+                      <input type="text" id="billing_apartment" name="billing_apartment"
+                        class="floating-input peer" placeholder=" " value="{{ old('billing_apartment') }}"
+                        autocomplete="billing address-line2" />
+                      <label for="billing_apartment" class="floating-label-input floating-label absolute">Apartment,
+                        suite, etc.
+                        (optional)</label>
+                    </div>
+                    <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+                      <div class="relative">
+                        <input type="text" id="billing_city" name="billing_city" class="floating-input peer"
+                          placeholder=" " value="{{ old('billing_city') }}"
+                          autocomplete="billing address-level2" />
+                        <label for="billing_city" class="floating-label-input floating-label absolute">City *</label>
+                      </div>
+                      <div class="relative">
+                        <select id="billing_state" name="billing_state" class="floating-select peer"
+                          autocomplete="billing address-level1"
+                          data-old="{{ old('billing_state') }}">
+                          <option value=""></option>
+                          <!-- Options loaded dynamically by JS -->
+                        </select>
+                        <label for="billing_state" class="floating-label-select floating-label absolute">State *</label>
+                      </div>
+                      <div class="relative">
+                        <input type="text" id="billing_zip" name="billing_zip" class="floating-input peer"
+                          placeholder=" " value="{{ old('billing_zip') }}"
+                          autocomplete="billing postal-code" />
+                        <label for="billing_zip" class="floating-label-input floating-label absolute">ZIP
+                          Code</label>
+                      </div>
+                    </div>
+                  </div>
+                </section>
+
+                {{-- Order Notes --}}
+                <section class="mb-8">
+                  <h2 class="text-lg text-black font-semibold mb-4">Order Notes</h2>
+                  <div class="relative">
+                    <textarea id="order_notes" name="order_notes" class="floating-input peer h-24" placeholder=" ">{{ old('order_notes') }}</textarea>
+                    <label for="order_notes" class="floating-label-input floating-label absolute">Special instructions
+                      for delivery (optional)</label>
+                  </div>
+                </section>
+
+
+                <div class="flex items-center my-2.5">
+                  <input type="hidden" name="save_information" value="0">
+                  <input type="checkbox" id="save_information" name="save_information" class="mr-2" value="1"
+                    {{ old('save_information') ? 'checked' : '' }}>
+                  <label for="save_information" class="text-sm">Save my information for a faster checkout next time.</label>
                 </div>
-              </section>
 
-              {{-- Order Notes --}}
-              <section class="mb-8">
-                <h2 class="text-lg text-black font-semibold mb-4">Order Notes</h2>
-                <div class="relative">
-                  <textarea id="order_notes" name="order_notes" class="floating-input peer h-24" placeholder=" "></textarea>
-                  <label for="order_notes" class="floating-label-input floating-label absolute">Special instructions for delivery (optional)</label>
+                {{-- Terms and Conditions Agreement --}}
+                <div class="mb-8 flex items-center">
+                  <input type="checkbox" id="terms_agreement" name="terms_agreement" class="mr-2" required
+                    {{ old('terms_agreement') ? 'checked' : '' }}>
+                  <label for="terms_agreement" class="text-sm">I agree to the <a href="{{ route('terms') }}"
+                      class="text-primary hover:underline">Terms & Conditions</a> and <a href="{{ route('privacy') }}"
+                      class="text-primary hover:underline">Privacy Policy</a></label>
                 </div>
-              </section>
 
-              {{-- Terms and Conditions Agreement --}}
-              <div class="mb-8 flex items-center">
-                <input type="checkbox" id="terms_agreement" name="terms_agreement" class="mr-2" required>
-                <label for="terms_agreement" class="text-sm">I agree to the <a href="{{ route('terms') }}" class="text-primary hover:underline">Terms & Conditions</a> and <a href="{{ route('privacy') }}" class="text-primary hover:underline">Privacy Policy</a> *</label>
-              </div>
+                {{-- Form Buttons --}}
+                <button type="button" id="checkout-button"
+                  class="cursor-pointer w-full bg-primary text-white py-3 px-4 rounded-sm font-medium hover:bg-opacity-90">Pay
+                  Now</button>
 
-              <a href="{{ Route::has('cart') ? route('cart') : '#'}}" class="text-sm text-primary hover:underline mb-4 block">Return to Cart</a>
+                <button type="button"
+                  class="w-full flex items-center justify-center gap-2.5 py-1 mt-4 text-primary drop-shadow-xs px-4 rounded-sm font-medium hover:bg-opacity-90">
+                  <x-ionicon-logo-whatsapp class="size-6 sm:size-8" aria-hidden="true" />
+                  <span>Order Using WhatsApp</span>
+                </button>
+              </form>
+
+
+              {{-- <a href="{{ Route::has('cart') ? route('cart') : '#' }}"
+                class="text-sm text-primary hover:underline mb-4 hidden md:block">Return to Cart</a> --}}
 
               {{-- <button type="submit"
                 class="w-full bg-primary text-white py-3 px-4 rounded-md font-semibold hover:bg-opacity-90">Pay
                 Now</button> --}}
-                <footer class="mt-16 py-4 border-t border-whitesmoke flex justify-between">
-                  <dl class="w-auto flex items-center text-xs gap-3 sm:gap-8 text-black">
-                    <a href="{{ route('privacy') }}" class="text-black hover:text-[#555]">Privacy Policy</a>
-                    <a href="{{ route('terms') }}" class="text-black hover:text-[#555]">Terms &amp; Condition</a>
-                    <a href="{{ route('sitemap') }}" class="text-black hover:text-[#555]">Sitemap</a>
-                  </dl>
+              <footer class="hidden md:flex mt-16 py-4 border-t border-whitesmoke justify-between">
+                <dl class="w-auto flex items-center text-xs gap-3 sm:gap-8 text-black">
+                  <a href="{{ route('privacy') }}" class="text-black hover:text-[#555]">Privacy Policy</a>
+                  <a href="{{ route('terms') }}" class="text-black hover:text-[#555]">Terms &amp; Condition</a>
+                  <a href="{{ route('sitemap') }}" class="text-black hover:text-[#555]">Sitemap</a>
+                </dl>
 
-                  <img class="" src="{{ asset('/img/Visamastercard.webp') }}" alt="Visa and Mastercard payment options"
-                    width="48" height="16" loading="lazy">
-                </footer>
+                <img class="" src="{{ asset('/img/Visamastercard.webp') }}"
+                  alt="Visa and Mastercard payment options" width="48" height="16" loading="lazy">
+              </footer>
             </div>
 
           </section>
 
           {{-- Right: Sticky Order Summary --}}
-          <aside class="md:col-span-2 md:sticky md:top-0 md:self-start md:h-svh bg-cream/10 p-6 py-9">
-            <div class="w-full max-w-96">
+          <aside class="md:col-span-2 md:sticky md:top-0 md:self-start md:h-svh bg-cream/10 sm:p-6 sm:py-9">
+            <div class="ml-auto md:ml-0 mr-auto w-full sm:max-w-xl md:max-w-96">
               {{-- <h2 class="text-lg text-black font-semibold mb-4">Order Summary</h2> --}}
               <div class="space-y-4">
                 {{-- Sample Items --}}
@@ -349,8 +382,10 @@
                 <div class="mb-4">
                   <h3 class="text-sm font-medium mb-2">Promo Code</h3>
                   <div class="flex gap-2">
-                    <input type="text" id="promo_code" name="promo_code" placeholder="Enter code" class="floating-input peer flex-1">
-                    <button type="button" class="bg-primary text-white py-2 px-4 rounded-sm font-medium hover:bg-opacity-90">Apply</button>
+                    <input type="text" id="promo_code" name="promo_code" placeholder="Enter code"
+                      class="floating-input peer flex-1">
+                    <button type="button"
+                      class="bg-primary text-white py-2 px-4 rounded-sm font-medium hover:bg-opacity-90">Apply</button>
                   </div>
                 </div>
 
@@ -377,7 +412,7 @@
                 {{-- Trust Badges --}}
                 <div class="space-y-3 pt-4 border-t border-primary/20">
                   <div class="flex items-center gap-3 text-sm">
-                    <x-heroicon-o-truck  class="w-4 h-4 text-primary" />
+                    <x-heroicon-o-truck class="w-4 h-4 text-primary" />
                     <span class="text-black opacity-60">Free shipping on orders over ₦50</span>
                   </div>
                   <div class="flex items-center gap-3 text-sm">
@@ -386,24 +421,88 @@
                   </div>
                 </div>
 
-                <button type="submit"
-                class="w-full bg-primary text-white py-3 px-4 rounded-sm font-medium hover:bg-opacity-90">Pay
-                Now</button>
-
-                <button type="button"
-                class="w-full flex items-center justify-center gap-2.5 text-emerald-700 px-4 rounded-sm font-medium hover:bg-opacity-90">
-                  <x-ionicon-logo-whatsapp class="size-6 sm:size-8" aria-hidden="true" />
-                  <span>Order Using WhatsApp</span>
-                </button>
-
           </aside>
+
         </div>
       </div>
     </article>
+
+    <!-- Toast Container -->
+    <div class="fixed *:!relative top-0 right-0 w-full max-w-sm p-4 space-y-2 z-50">
+        <!-- Single success/error flashes -->
+        @if (session('success'))
+            <x-toast type="success" message="{{ session('success') }}" />
+        @endif
+        @if (session('error'))
+            <x-toast type="error" message="{{ session('error') }}" />
+        @endif
+
+        <!-- Multiple validation errors (each as a separate toast) -->
+        @if ($errors->any())
+            @foreach ($errors->all() as $error)
+                <x-toast type="error" message="{{ $error }}" />
+            @endforeach
+        @endif
+    </div>
   </main>
 
   <!-- Simple JS for toggles (e.g., create account, billing same as shipping) -->
   @vite('resources/js/checkout.js')
+  <script>
+    document.addEventListener("DOMContentLoaded", function() {
+      const form = document.getElementById("checkout-form");
+      const button = document.getElementById("checkout-button");
+      
+      button.addEventListener("click", function(e) {
+        e.preventDefault(); // Prevent form submission for validation
+        let valid = true;
+        let firstInvalid = null;
+
+        // Find all required inputs/selects that are visible
+        const requiredFields = form.querySelectorAll("input[required], select[required], textarea[required]");
+
+        requiredFields.forEach(field => {
+          const isVisible = field.offsetParent !== null; // true if not hidden with display:none
+          console.log('field check', field)
+          
+          if (isVisible && !field.value.trim() || field.type === "checkbox" && !field.checked) {
+            valid = false;
+
+            // Add error styling
+            field.classList.add("border-red-500");
+
+            // Optionally insert error message (if not already)
+            if (!field.parentNode.getElementsByClassName("error-msg").length) {
+              const msg = document.createElement("div");
+              msg.className = "error-msg text-red-500 text-xs mt-1";
+              msg.innerText = "This field is required";
+              field.parentNode.appendChild(msg);
+            }
+
+            // focus the first invalid field
+            if (!firstInvalid) firstInvalid = field;
+          } else {
+            // Remove error state if corrected
+            field.classList.remove("border-red-500");
+            const err_div = field.parentNode.getElementsByClassName("error-msg")
+
+            console.log('conditional check')
+            console.log(!!err_div.length )
+            if (!!err_div.length) {
+              err_div.item(0).remove();
+            }
+          }
+        });
+
+        if (!valid) {
+          e.preventDefault();
+          firstInvalid.focus();
+          return
+        }
+        form.submit();
+      });
+    });
+  </script>
 
 </body>
 

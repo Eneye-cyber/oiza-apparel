@@ -74,7 +74,7 @@
     shippingFeeEl: document.getElementById('shipping_fee'),
     billingSameAsShipping: document.getElementById('billing_same_as_shipping'),
     billingFields: document.getElementById('billing_fields'),
-    createAccount: document.getElementById('create_account'),
+    // createAccount: document.getElementById('create_account'),
     passwordFields: document.getElementById('password_fields'),
     termsAgreement: document.getElementById('terms_agreement'),
     submitButton: document.querySelector('button[type="submit"]'),
@@ -107,8 +107,8 @@
   (function initSubtotal() {
     // try to read subtotal from server markup: value inside element (e.g. ₦123.45)
     const subtotalText = document.querySelector('[data-subtotal]')?.textContent
-                      || document.querySelector('.space-y-4 .text-black.opacity-60 + span')?.textContent
-                      || null;
+      || document.querySelector('.space-y-4 .text-black.opacity-60 + span')?.textContent
+      || null;
     if (subtotalText) {
       // remove non-digits except decimal
       const cleaned = subtotalText.replace(/[^\d.-]+/g, '');
@@ -188,6 +188,9 @@
   function populateCountryDropdown(countries) {
     if (!dom.country) return;
     dom.country.innerHTML = '';
+    const old = dom.country.dataset.old || '';
+    dom.country.dataset.old = ''; // reset stored value
+
     dom.country.appendChild(createOption({ value: '', text: 'Select Country' }));
 
     countries.forEach(country => {
@@ -196,11 +199,15 @@
       const opt = createOption({ value: code, text: name });
       dom.country.appendChild(opt);
     });
+    dom.country.value = old;
+    dom.country.dispatchEvent(new Event('change'))
   }
 
   function populateStateDropdown(states) {
     if (!dom.state) return;
     dom.state.innerHTML = '';
+    const old = dom.state.dataset.old || '';
+    dom.state.dataset.old = ''; // reset stored value
     dom.state.appendChild(createOption({ value: '', text: 'Select State' }));
     if (!Array.isArray(states) || states.length === 0) {
       return;
@@ -209,9 +216,12 @@
       const opt = createOption({
         value: state.id ?? state.code ?? state.name ?? '',
         text: state.name ?? state.title ?? ''
+
       });
       dom.state.appendChild(opt);
     });
+    dom.state.value = old;
+    dom.state.dispatchEvent(new Event('change'))
   }
 
   function populateShippingMethods(methods) {
@@ -236,6 +246,7 @@
 
     methods.forEach((method, idx) => {
       // sanitize / validate method
+      console.log(method, idx)
       const id = method.id ?? method.code ?? `generated-${idx}-${safeSlug(method.name)}`;
       const name = String(method.name ?? `Method ${idx + 1}`);
       const cost = Number(method.delivery_cost ?? 0);
@@ -315,7 +326,7 @@
 
     // abort previous country detail fetch if any
     if (activeFetchControllers.countryFetch) {
-      try { activeFetchControllers.countryFetch.abort(); } catch (_) {}
+      try { activeFetchControllers.countryFetch.abort(); } catch (_) { }
     }
 
     setLoadingShipping(true);
@@ -352,7 +363,7 @@
     }
 
     if (activeFetchControllers.stateFetch) {
-      try { activeFetchControllers.stateFetch.abort(); } catch (_) {}
+      try { activeFetchControllers.stateFetch.abort(); } catch (_) { }
     }
 
     setLoadingShipping(true);
@@ -379,15 +390,15 @@
      ------------------------- */
   function wireEvents() {
     // create account toggle
-    dom.createAccount?.addEventListener('change', function () {
-      if (!dom.passwordFields) return;
-      dom.passwordFields.classList.toggle('hidden', !this.checked);
-      // If hiding, clear password fields for safety
-      if (!this.checked) {
-        const pw = dom.passwordFields.querySelectorAll('input[type="password"]');
-        pw.forEach(i => i.value = '');
-      }
-    });
+    // dom.createAccount?.addEventListener('change', function () {
+    //   if (!dom.passwordFields) return;
+    //   dom.passwordFields.classList.toggle('hidden', !this.checked);
+    //   // If hiding, clear password fields for safety
+    //   if (!this.checked) {
+    //     const pw = dom.passwordFields.querySelectorAll('input[type="password"]');
+    //     pw.forEach(i => i.value = '');
+    //   }
+    // });
 
     // billing same as shipping toggle
     dom.billingSameAsShipping?.addEventListener('change', function () {
