@@ -56,8 +56,9 @@ class StoreOrderRequest extends FormRequest
             'shipping_method' => 'required|integer ',
             'order_notes' => 'nullable|string|max:1000',
             'save_information' => 'required|boolean',
+            'marketing_opt_in' => 'required|boolean',
 
-            'terms_agreement' => 'accepted',
+            // 'terms_agreement' => 'accepted',
         ];
     }
 }

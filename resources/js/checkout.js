@@ -224,6 +224,27 @@
     dom.state.dispatchEvent(new Event('change'))
   }
 
+  function addBusinessDays(startDate, days) {
+    const result = new Date(startDate);
+    let addedDays = 0;
+    while (addedDays < days) {
+      result.setDate(result.getDate() + 1);
+      const dayOfWeek = result.getDay();
+      if (dayOfWeek !== 0 && dayOfWeek !== 6) { // Skip Sundays (0) and Saturdays (6)
+        addedDays++;
+      }
+    }
+    return result;
+  }
+
+  function formatDate(date) {
+    return date.toLocaleDateString('en-US', {
+      year: 'numeric',
+      month: 'short',
+      day: 'numeric'
+    });
+  }
+
   function populateShippingMethods(methods) {
     const container = dom.shippingMethodsContainer;
     container.innerHTML = '';
@@ -244,6 +265,8 @@
     container.setAttribute('role', 'radiogroup');
     container.setAttribute('aria-labelledby', 'shipping-methods-label');
 
+    const today = new Date();
+
     methods.forEach((method, idx) => {
       // sanitize / validate method
       console.log(method, idx)
@@ -253,8 +276,12 @@
       const minDays = method.delivery_min_days ?? method.min_days ?? 0;
       const maxDays = method.delivery_max_days ?? method.max_days ?? 0;
 
+      const estimatedMinDate = addBusinessDays(today, minDays);
+      const estimatedMaxDate = addBusinessDays(today, maxDays);
+      const estimatedDateRange = `${formatDate(estimatedMinDate)} – ${formatDate(estimatedMaxDate)}`;
+
       const wrapper = document.createElement('div');
-      wrapper.className = 'flex items-center';
+      wrapper.className = 'flex items-start py-2 border-b border-gray-100 last:border-b-0';
 
       const radio = document.createElement('input');
       radio.type = 'radio';
@@ -263,20 +290,40 @@
       radio.value = id;
       radio.dataset.cost = String(cost);
       radio.required = true;
-      radio.className = 'mr-2';
+      radio.className = 'mt-1 mr-3 flex-shrink-0';
 
       radio.addEventListener('change', (e) => {
         selectedShipping = { id, name, delivery_cost: cost, delivery_min_days: minDays, delivery_max_days: maxDays };
         updateShippingFeeDisplay(cost);
         updateTotalDisplay();
         validateFormReady();
-        dom.shippingAriaLive.textContent = `Selected ${name} ${formatMoneySafe(cost)}. Delivery ${minDays}–${maxDays} business days.`;
+        dom.shippingAriaLive.textContent = `Selected ${name} ${formatMoneySafe(cost)}. Estimated delivery ${estimatedDateRange}.`;
       });
 
       const label = document.createElement('label');
       label.htmlFor = radio.id;
-      label.className = 'text-sm';
-      label.textContent = `${name} (${minDays} - ${maxDays} business days) - ${formatMoneySafe(cost)}`;
+      label.className = 'flex justify-between items-start w-full cursor-pointer';
+
+      const methodInfo = document.createElement('div');
+      methodInfo.className = 'flex flex-col space-y-1';
+
+      const methodName = document.createElement('span');
+      methodName.textContent = name;
+      methodName.className = 'text-sm font-medium text-gray-900';
+
+      const deliverySpan = document.createElement('span');
+      deliverySpan.textContent = `Estimated delivery ${estimatedDateRange}`;
+      deliverySpan.className = 'text-xs text-gray-500';
+
+      methodInfo.appendChild(methodName);
+      methodInfo.appendChild(deliverySpan);
+
+      const costSpan = document.createElement('span');
+      costSpan.textContent = formatMoneySafe(cost);
+      costSpan.className = 'text-sm font-semibold text-gray-900 ml-auto';
+
+      label.appendChild(methodInfo);
+      label.appendChild(costSpan);
 
       wrapper.appendChild(radio);
       wrapper.appendChild(label);

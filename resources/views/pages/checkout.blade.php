@@ -128,6 +128,25 @@
                         value="{{ old('phone') }}"
                         autocomplete="tel" required>
                       <label for="phone" class="floating-label-input floating-label absolute">Phone *</label>
+
+                      <!-- Tooltip -->
+                      <!-- Info Icon appended inside the input -->
+                      <div class="absolute inset-y-0 right-0 flex items-center pr-3 group">
+                        <x-heroicon-o-information-circle class="h-5 w-5 text-primary cursor-help" />
+                       
+                        <!-- Tooltip -->
+                        <div class="absolute right-0 top-full mt-2 hidden group-hover:block bg-gray-800 text-white text-sm px-3 py-1 rounded-md shadow-lg whitespace-nowrap z-10">
+                          In case we need to contact you about your order during delivery
+                          <div class="absolute right-4 top-0 -translate-y-2 w-0 h-0 border-l-4 border-r-4 border-b-4 border-transparent border-b-gray-800"></div>
+                        </div>
+                      </div>
+                    </div>
+
+                    <div class="flex items-center mt-2.5">
+                      <input type="hidden" name="marketing_opt_in" value="0">
+                      <input type="checkbox" id="marketing_opt_in" name="marketing_opt_in" class="mr-2" value="1" checked
+                        {{ old('marketing_opt_in') ? 'checked' : '' }}>
+                      <label for="marketing_opt_in" class="text-sm">Email me with news and offers</label>
                     </div>
                   </div>
                 </section>
@@ -304,16 +323,7 @@
                     {{ old('save_information') ? 'checked' : '' }}>
                   <label for="save_information" class="text-sm">Save my information for a faster checkout next time.</label>
                 </div>
-
-                {{-- Terms and Conditions Agreement --}}
-                <div class="mb-8 flex items-center">
-                  <input type="checkbox" id="terms_agreement" name="terms_agreement" class="mr-2" required
-                    {{ old('terms_agreement') ? 'checked' : '' }}>
-                  <label for="terms_agreement" class="text-sm">I agree to the <a href="{{ route('terms') }}"
-                      class="text-primary hover:underline">Terms & Conditions</a> and <a href="{{ route('privacy') }}"
-                      class="text-primary hover:underline">Privacy Policy</a></label>
-                </div>
-
+                
                 {{-- Form Buttons --}}
                 <button type="button" id="checkout-button"
                   class="cursor-pointer w-full bg-primary text-white py-3 px-4 rounded-sm font-medium hover:bg-opacity-90">Pay
@@ -463,7 +473,6 @@
 
         requiredFields.forEach(field => {
           const isVisible = field.offsetParent !== null; // true if not hidden with display:none
-          console.log('field check', field)
           
           if (isVisible && !field.value.trim() || field.type === "checkbox" && !field.checked) {
             valid = false;
@@ -486,8 +495,6 @@
             field.classList.remove("border-red-500");
             const err_div = field.parentNode.getElementsByClassName("error-msg")
 
-            console.log('conditional check')
-            console.log(!!err_div.length )
             if (!!err_div.length) {
               err_div.item(0).remove();
             }
