@@ -1,0 +1,79 @@
+<?php
+
+namespace App\Http\Controllers;
+
+use App\Enums\OrderStatus;
+use App\Enums\PaymentMethod;
+use App\Enums\PaymentStatus;
+use App\Http\Requests\StoreOrderRequest;
+use App\Models\Orders\Order;
+use App\Models\Shipping\ShippingState;
+use Illuminate\Http\Request;
+use App\Services\CartService;
+use App\Services\OrderService;
+use Illuminate\Support\Facades\Log;
+use Illuminate\Support\Facades\DB;
+
+
+class CheckoutController extends Controller
+{
+    //
+    protected CartService $cartService;
+    protected OrderService $orderService;
+
+    public function __construct(CartService $cartService, OrderService $orderService)
+    {
+        $this->cartService = $cartService;
+        $this->orderService = $orderService;
+    }
+
+    public function index()
+    {
+        $cart = $this->cartService->getCart()->load([
+            'items.product' => function ($query) {
+                $query->select('id', 'cover_media', 'name', 'category_id', 'main_color');
+            },
+            'items.product.category' => function ($query) {
+                $query->select('id', 'name');
+            },
+        ]);
+
+        // No need to map for URL conversion anymore
+        $cartItems = $cart->items;
+        $subtotal = $cartItems->sum(fn($i) => $i->price * $i->quantity);
+        if ($cartItems->isEmpty()) {
+            return redirect()->route('shop')->with('error', 'Your cart is empty.');
+        }
+
+        return view('pages.checkout', compact('cartItems', 'subtotal'));
+    }
+
+
+    public function store(StoreOrderRequest $request)
+    {
+        $validated = $request->validated();
+
+        $cart = $this->cartService->getCart()->load([
+            'items.product:id',
+            'items.product.category:id',
+        ]);
+
+        try {
+            $order = $this->orderService->createFromCart($validated, $cart->items);
+
+            Log::info('Order placed successfully', [
+                'order_id' => $order->id,
+                'total'    => $order->total,
+                'items'    => $order->items()->count(),
+            ]);
+
+            return redirect()->route('checkout')->with('success', 'Order placed successfully!');
+        } catch (\Throwable $th) {
+            Log::error('Order creation failed', [
+                'error' => $th->getMessage(),
+                'trace' => $th->getTraceAsString(),
+            ]);
+            return redirect()->route('checkout')->with('error', 'Something went wrong. Please try again.');
+        }
+    }
+}

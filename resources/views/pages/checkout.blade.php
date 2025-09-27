@@ -1,0 +1,516 @@
+<!DOCTYPE html>
+<html lang="{{ str_replace('_', '-', app()->getLocale()) }}">
+
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="csrf-token" content="{{ csrf_token() }}">
+
+  <title>Checkout - Oiza Apparels</title>
+  <meta name="description"
+    content="Complete your purchase at Oiza Apparels. Secure checkout, multiple payment options, and fast delivery.">
+
+
+  <!-- Preload Key Resources -->
+  <link rel="preload" href="https://fonts.bunny.net/css?family=instrument-sans:400,500,600" as="style">
+  <link rel="preload" href="{{ Vite::asset('resources/css/app.css') }}" as="style">
+
+  <!-- Fonts -->
+  <link rel="preconnect" href="https://fonts.bunny.net">
+  <link href="https://fonts.bunny.net/css?family=instrument-sans:400,500,600" rel="stylesheet" />
+
+  <!-- Favicon -->
+  <link rel="apple-touch-icon" sizes="180x180" href="{{ asset('/favicon/apple-touch-icon.png') }}">
+  <link rel="icon" type="image/png" sizes="32x32" href="{{ asset('/favicon/favicon-32x32.png') }}">
+  <link rel="icon" type="image/png" sizes="16x16" href="{{ asset('/favicon/favicon-16x16.png') }}">
+  <link rel="manifest" href="{{ asset('/favicon/site.webmanifest') }}">
+
+  <!-- Styles / Scripts -->
+  @if (file_exists(public_path('build/manifest.json')) || file_exists(public_path('hot')))
+    @vite(['resources/css/checkout.css', 'resources/js/app.js'])
+  @else
+    <link rel="stylesheet" href="{{ asset('/fallback.css') }}">
+  @endif
+</head>
+
+<body class="bg-white text-black overflow-x-clip">
+
+
+  <main class="font-dm-sans min-h-80">
+    <article class="pb-12">
+
+      {{-- Checkout Page Content --}}
+      <div class="mx-auto px-4">
+
+        <div class="grid grid-cols-1 md:grid-cols-5 gap-8">
+          {{-- Left: Checkout Form --}}
+          <section class="md:col-span-3 flex h-full py-8">
+            <div class="mr-auto ml-auto md:mr-0 max-w-xl w-full h-full">
+              <header class="space-y-2">
+                <h2>
+                  <a href="/"
+                    class="font-playfair-display text-2xl font-medium text-primary drop-shadow-xs drop-shadow-primary/20"
+                    aria-label="Oiza Apparels Home">
+                    OIZA
+                  </a>
+                </h2>
+                <div class="pb-5">
+                  <div>
+                    <nav aria-label="breadcrumb">
+                      <ol itemscope itemtype="https://schema.org/BreadcrumbList" class="flex items-center gap-2.5">
+
+                        {{-- Home --}}
+                        <li itemprop="itemListElement" itemscope itemtype="https://schema.org/ListItem">
+                          <a itemprop="item" href="/"
+                            class="text-xs text-black opacity-80 flex gap-2.5 items-center">
+                            <span itemprop="name">Home</span>
+                            <x-heroicon-o-chevron-right class="h-3 w-auto" />
+                          </a>
+                          <meta itemprop="position" content="1" />
+                        </li>
+
+                        {{-- Products --}}
+                        <li itemprop="itemListElement" itemscope itemtype="https://schema.org/ListItem">
+                          <a itemprop="item" href="/shop"
+                            class="text-xs text-black opacity-80 flex gap-2.5 items-center">
+                            <span itemprop="name">Shop</span>
+                            <x-heroicon-o-chevron-right class="h-3 w-auto" />
+                          </a>
+                          <meta itemprop="position" content="2" />
+                        </li>
+
+                        {{-- Cart --}}
+                        <li itemprop="itemListElement" itemscope itemtype="https://schema.org/ListItem">
+                          <a itemprop="item" href="{{ Route::has('cart') ? route('cart') : '#' }}"
+                            class="text-xs text-black opacity-80 flex gap-2.5 items-center">
+                            <span itemprop="name">Cart</span>
+                            <x-heroicon-o-chevron-right class="h-3 w-auto" />
+                          </a>
+                          <meta itemprop="position" content="3" />
+                        </li>
+
+                        {{-- Checkout --}}
+                        <li itemprop="itemListElement" itemscope itemtype="https://schema.org/ListItem">
+                          <a itemprop="item" href="{{ route('checkout') }}"
+                            class="text-xs text-black opacity-80 flex gap-2.5 items-center breadcrumb-link-active">
+                            <span itemprop="name">Checkout</span>
+                            <x-heroicon-o-chevron-right class="h-3 w-auto opacity-0" />
+                          </a>
+                          <meta itemprop="position" content="4" />
+                        </li>
+                      </ol>
+                    </nav>
+                  </div>
+                </div>
+
+              </header>
+
+              <form action="{{ route('checkout.store') }}" method="POST" id="checkout-form">
+                @csrf
+
+                {{-- Contact Information & Account Creation --}}
+                <section class="mb-8">
+                  <h2 class="text-lg text-black font-semibold ">Contact Information</h2>
+                  <p class="text-sm text-black opacity-80">Already have an account? 
+                    <a href="{{ Route::has('login') ? route('login') : '#' }}" class="text-primary hover:underline">Sign in</a> for faster checkout.
+                  </p>
+                  <div class="space-y-4 mt-6">
+                    <div class="relative">
+                      <input type="email" id="email" name="email" placeholder="" class="floating-input peer"
+                        value="{{ old('email') }}"
+                        autocomplete="email" required>
+                      <label for="email"
+                        class="floating-label-input floating-label absolute !peer-not-placeholder-shown:top-[-0.5rem]">Email
+                        address *</label>
+                    </div>
+                    <div class="relative">
+                      <input type="tel" id="phone" name="phone" placeholder="" class="floating-input peer"
+                        value="{{ old('phone') }}"
+                        autocomplete="tel" required>
+                      <label for="phone" class="floating-label-input floating-label absolute">Phone *</label>
+
+                      <!-- Tooltip -->
+                      <!-- Info Icon appended inside the input -->
+                      <div class="absolute inset-y-0 right-0 flex items-center pr-3 group">
+                        <x-heroicon-o-information-circle class="h-5 w-5 text-primary cursor-help" />
+                       
+                        <!-- Tooltip -->
+                        <div class="absolute right-0 top-full mt-2 hidden group-hover:block bg-gray-800 text-white text-sm px-3 py-1 rounded-md shadow-lg whitespace-nowrap z-10">
+                          In case we need to contact you about your order during delivery
+                          <div class="absolute right-4 top-0 -translate-y-2 w-0 h-0 border-l-4 border-r-4 border-b-4 border-transparent border-b-gray-800"></div>
+                        </div>
+                      </div>
+                    </div>
+
+                    <div class="flex items-center mt-2.5">
+                      <input type="hidden" name="marketing_opt_in" value="0">
+                      <input type="checkbox" id="marketing_opt_in" name="marketing_opt_in" class="mr-2" value="1" checked
+                        {{ old('marketing_opt_in') ? 'checked' : '' }}>
+                      <label for="marketing_opt_in" class="text-sm">Email me with news and offers</label>
+                    </div>
+                  </div>
+                </section>
+
+                {{-- Shipping Address --}}
+                <section class="mb-8">
+                  <h2 class="text-lg text-black font-semibold mb-4">Shipping Address</h2>
+
+                  <div class="relative ">
+                    <select id="country" name="country" class="floating-select peer" autocomplete="country-name" required
+                      data-old="{{ old('country') }}">
+                      <option value="">Select Country</option>
+                      <!-- Options loaded dynamically by JS -->
+                    </select>
+                    <label for="country" class="floating-label-select floating-label absolute">Country *</label>
+                  </div>
+
+                  <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mt-4">
+                    <div class="relative">
+                      <input type="text" id="first_name" name="first_name" class="floating-input peer"
+                        placeholder=" " value="{{ old('first_name') }}"
+                        autocomplete="given-name" required />
+                      <label for="first_name" class="floating-label-input floating-label absolute">First Name *</label>
+                    </div>
+                    <div class="relative">
+                      <input type="text" id="last_name" name="last_name" class="floating-input peer"
+                        placeholder=" " value="{{ old('last_name') }}"
+                        autocomplete="family-name" required />
+                      <label for="last_name" class="floating-label-input floating-label absolute">Last Name *</label>
+                    </div>
+                  </div>
+
+                  <div class="relative mt-4">
+                    <input type="text" id="address" name="address" class="floating-input peer" placeholder=" "
+                      value="{{ old('address') }}"
+                      autocomplete="street-address" required />
+                    <label for="address" class="floating-label-input floating-label absolute">Address *</label>
+                  </div>
+                  <div class="relative mt-4">
+                    <input type="text" id="apartment" name="apartment" class="floating-input peer" placeholder=" "
+                      value="{{ old('apartment') }}"
+                      autocomplete="address-line2" />
+                    <label for="apartment" class="floating-label-input floating-label absolute">Apartment, suite, etc.
+                      (optional)</label>
+                  </div>
+                  <div class="grid grid-cols-1 md:grid-cols-3 gap-4 mt-4">
+                    <div class="relative">
+                      <input type="text" id="city" name="city" class="floating-input peer" placeholder=" "
+                        value="{{ old('city') }}"
+                        autocomplete="address-level2" required />
+                      <label for="city" class="floating-label-input floating-label absolute">City *</label>
+                    </div>
+                    <div class="relative">
+                      <select id="state" name="state" class="floating-select peer" autocomplete="address-level1" required
+                        data-old="{{ old('state') }}">
+                        <option value=""></option>
+                        <!-- Options loaded dynamically by JS -->
+                      </select>
+                      <label for="state" class="floating-label-select floating-label absolute">State *</label>
+                    </div>
+                    <div class="relative">
+                      <input type="text" id="zip" name="zip" class="floating-input peer" placeholder=" "
+                        value="{{ old('zip') }}"
+                        autocomplete="postal-code" />
+                      <label for="zip" class="floating-label-input floating-label absolute">ZIP
+                        Code</label>
+                    </div>
+                  </div>
+                </section>
+
+                {{-- Shipping Method Selection --}}
+                <section class="mb-8">
+                  <h2 class="text-lg text-black font-semibold mb-4">Shipping Method</h2>
+                  <div class="space-y-4" id="shipping_methods">
+                    <p class="text-sm text-black opacity-60">Select your shipping method based on your location.</p>
+                    {{-- Shipping methods will be populated here based on selected country --}}
+                  </div>
+                </section>
+
+                {{-- Billing Address --}}
+                <section class="mb-8">
+                  <h2 class="text-lg text-black font-semibold mb-4">Billing Address</h2>
+                  <div class="flex items-center mb-4">
+                    <input type="hidden" name="billing_same_as_shipping" value="0">
+                    <input type="checkbox" id="billing_same_as_shipping" name="billing_same_as_shipping"
+                      class="mr-2" value="1" {{ old('billing_same_as_shipping', 1) ? 'checked' : '' }}>
+                    <label for="billing_same_as_shipping" class="text-sm">Same as shipping address</label>
+                  </div>
+                  <div id="billing_fields" class="space-y-4 hidden">
+                    <div class="relative ">
+                      <select id="billing_country" name="billing_country" class="floating-select peer"
+                        autocomplete="billing country-name"
+                        data-old="{{ old('billing_country') }}">
+                        <option value="">Select country</option>
+                        <!-- Options loaded dynamically by JS -->
+                      </select>
+                      <label for="billing_country" class="floating-label-select floating-label absolute">Country
+                        *</label>
+                    </div>
+
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                      <div class="relative">
+                        <input type="text" id="billing_first_name" name="billing_first_name"
+                          class="floating-input peer" placeholder=" " value="{{ old('billing_first_name') }}"
+                          autocomplete="billing given-name" />
+                        <label for="billing_first_name" class="floating-label-input floating-label absolute">First Name
+                          *</label>
+                      </div>
+                      <div class="relative">
+                        <input type="text" id="billing_last_name" name="billing_last_name"
+                          class="floating-input peer" placeholder=" " value="{{ old('billing_last_name') }}"
+                          autocomplete="billing family-name" />
+                        <label for="billing_last_name" class="floating-label-input floating-label absolute">Last Name
+                          *</label>
+                      </div>
+                    </div>
+
+                    <div class="relative">
+                      <input type="text" id="billing_address" name="billing_address" class="floating-input peer"
+                        placeholder=" " value="{{ old('billing_address') }}"
+                        autocomplete="billing street-address" />
+                      <label for="billing_address" class="floating-label-input floating-label absolute">Address
+                        *</label>
+                    </div>
+                    <div class="relative">
+                      <input type="text" id="billing_apartment" name="billing_apartment"
+                        class="floating-input peer" placeholder=" " value="{{ old('billing_apartment') }}"
+                        autocomplete="billing address-line2" />
+                      <label for="billing_apartment" class="floating-label-input floating-label absolute">Apartment,
+                        suite, etc.
+                        (optional)</label>
+                    </div>
+                    <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+                      <div class="relative">
+                        <input type="text" id="billing_city" name="billing_city" class="floating-input peer"
+                          placeholder=" " value="{{ old('billing_city') }}"
+                          autocomplete="billing address-level2" />
+                        <label for="billing_city" class="floating-label-input floating-label absolute">City *</label>
+                      </div>
+                      <div class="relative">
+                        <select id="billing_state" name="billing_state" class="floating-select peer"
+                          autocomplete="billing address-level1"
+                          data-old="{{ old('billing_state') }}">
+                          <option value=""></option>
+                          <!-- Options loaded dynamically by JS -->
+                        </select>
+                        <label for="billing_state" class="floating-label-select floating-label absolute">State *</label>
+                      </div>
+                      <div class="relative">
+                        <input type="text" id="billing_zip" name="billing_zip" class="floating-input peer"
+                          placeholder=" " value="{{ old('billing_zip') }}"
+                          autocomplete="billing postal-code" />
+                        <label for="billing_zip" class="floating-label-input floating-label absolute">ZIP
+                          Code</label>
+                      </div>
+                    </div>
+                  </div>
+                </section>
+
+                {{-- Order Notes --}}
+                <section class="mb-8">
+                  <h2 class="text-lg text-black font-semibold mb-4">Order Notes</h2>
+                  <div class="relative">
+                    <textarea id="order_notes" name="order_notes" class="floating-input peer h-24" placeholder=" ">{{ old('order_notes') }}</textarea>
+                    <label for="order_notes" class="floating-label-input floating-label absolute">Special instructions
+                      for delivery (optional)</label>
+                  </div>
+                </section>
+
+
+                <div class="flex items-center my-2.5">
+                  <input type="hidden" name="save_information" value="0">
+                  <input type="checkbox" id="save_information" name="save_information" class="mr-2" value="1"
+                    {{ old('save_information') ? 'checked' : '' }}>
+                  <label for="save_information" class="text-sm">Save my information for a faster checkout next time.</label>
+                </div>
+                
+                {{-- Form Buttons --}}
+                <button type="button" id="checkout-button"
+                  class="cursor-pointer w-full bg-primary text-white py-3 px-4 rounded-sm font-medium hover:bg-opacity-90">Pay
+                  Now</button>
+
+                <button type="button"
+                  class="w-full flex items-center justify-center gap-2.5 py-1 mt-4 text-primary drop-shadow-xs px-4 rounded-sm font-medium hover:bg-opacity-90">
+                  <x-ionicon-logo-whatsapp class="size-6 sm:size-8" aria-hidden="true" />
+                  <span>Order Using WhatsApp</span>
+                </button>
+              </form>
+
+
+              {{-- <a href="{{ Route::has('cart') ? route('cart') : '#' }}"
+                class="text-sm text-primary hover:underline mb-4 hidden md:block">Return to Cart</a> --}}
+
+              {{-- <button type="submit"
+                class="w-full bg-primary text-white py-3 px-4 rounded-md font-semibold hover:bg-opacity-90">Pay
+                Now</button> --}}
+              <footer class="hidden md:flex mt-16 py-4 border-t border-whitesmoke justify-between">
+                <dl class="w-auto flex items-center text-xs gap-3 sm:gap-8 text-black">
+                  <a href="{{ route('privacy') }}" class="text-black hover:text-[#555]">Privacy Policy</a>
+                  <a href="{{ route('terms') }}" class="text-black hover:text-[#555]">Terms &amp; Condition</a>
+                  <a href="{{ route('sitemap') }}" class="text-black hover:text-[#555]">Sitemap</a>
+                </dl>
+
+                <img class="" src="{{ asset('/img/Visamastercard.webp') }}"
+                  alt="Visa and Mastercard payment options" width="48" height="16" loading="lazy">
+              </footer>
+            </div>
+
+          </section>
+
+          {{-- Right: Sticky Order Summary --}}
+          <aside class="md:col-span-2 md:sticky md:top-0 md:self-start md:h-svh bg-cream/10 sm:p-6 sm:py-9">
+            <div class="ml-auto md:ml-0 mr-auto w-full sm:max-w-xl md:max-w-96">
+              {{-- <h2 class="text-lg text-black font-semibold mb-4">Order Summary</h2> --}}
+              <div class="space-y-4">
+                {{-- Sample Items --}}
+                <div class="space-y-4">
+                  @foreach ($cartItems as $item)
+                    <div class="flex gap-3">
+                      <div class="relative">
+                        <img src="{{ $item->product['cover_media_url'] ?? '/placeholder.svg' }}"
+                          alt="{{ $item->product->name }}"
+                          class="w-16 h-16 rounded-lg object-cover bg-muted ring-2 ring-offset-1 ring-white" />
+                        <span
+                          class="absolute -top-2 -right-2 w-5 h-5 p-0 flex items-center justify-center text-xs bg-primary text-white rounded-sm ring-2 ring-offset-1 ring-white">
+                          {{ $item->quantity }}
+                        </span>
+                      </div>
+                      <div class="flex-1 min-w-0">
+                        <p class="text-sm font-medium truncate">{{ $item->product->name }}</p>
+                        <p class="text-sm text-black opacity-60">₦{{ $item->price }}</p>
+                      </div>
+                      <div class="text-sm font-medium">
+                        ₦{{ number_format($item->price * $item->quantity, 2) }}</div>
+                    </div>
+                  @endforeach
+
+                </div>
+
+                <hr class="my-4 border-t border-black/10" />
+
+                {{-- Promo Code --}}
+                <div class="mb-4">
+                  <h3 class="text-sm font-medium mb-2">Promo Code</h3>
+                  <div class="flex gap-2">
+                    <input type="text" id="promo_code" name="promo_code" placeholder="Enter code"
+                      class="floating-input peer flex-1">
+                    <button type="button"
+                      class="bg-primary text-white py-2 px-4 rounded-sm font-medium hover:bg-opacity-90">Apply</button>
+                  </div>
+                </div>
+
+                <hr class="my-4 border-t border-black/10" />
+
+                <div class="space-y-4">
+                  <div class="flex justify-between text-sm">
+                    <span class="text-black opacity-60">Subtotal</span>
+                    <span>₦{{ number_format($subtotal, 2) }}</span>
+                  </div>
+                  <div class="flex justify-between text-sm">
+                    <span class="text-black opacity-60">Shipping</span>
+                    <span class="text-accent font-medium" id="shipping_fee">TBD</span>
+                  </div>
+
+                  <hr class="my-4 border-t border-black/10" />
+
+                  <div class="flex justify-between font-semibold text-lg">
+                    <span>Total</span>
+                    <span>₦{{ number_format($subtotal, 2) }}</span>
+                  </div>
+                </div>
+
+                {{-- Trust Badges --}}
+                <div class="space-y-3 pt-4 border-t border-primary/20">
+                  <div class="flex items-center gap-3 text-sm">
+                    <x-heroicon-o-truck class="w-4 h-4 text-primary" />
+                    <span class="text-black opacity-60">Free shipping on orders over ₦50</span>
+                  </div>
+                  <div class="flex items-center gap-3 text-sm">
+                    <x-heroicon-o-shield-check class="w-4 h-4 text-primary" />
+                    <span class="text-black opacity-60">Secure 256-bit SSL encryption</span>
+                  </div>
+                </div>
+
+          </aside>
+
+        </div>
+      </div>
+    </article>
+
+    <!-- Toast Container -->
+    <div class="fixed *:!relative top-0 right-0 w-full max-w-sm p-4 space-y-2 z-50">
+        <!-- Single success/error flashes -->
+        @if (session('success'))
+            <x-toast type="success" message="{{ session('success') }}" />
+        @endif
+        @if (session('error'))
+            <x-toast type="error" message="{{ session('error') }}" />
+        @endif
+
+        <!-- Multiple validation errors (each as a separate toast) -->
+        @if ($errors->any())
+            @foreach ($errors->all() as $error)
+                <x-toast type="error" message="{{ $error }}" />
+            @endforeach
+        @endif
+    </div>
+  </main>
+
+  <!-- Simple JS for toggles (e.g., create account, billing same as shipping) -->
+  @vite('resources/js/checkout.js')
+  <script>
+    document.addEventListener("DOMContentLoaded", function() {
+      const form = document.getElementById("checkout-form");
+      const button = document.getElementById("checkout-button");
+      
+      button.addEventListener("click", function(e) {
+        e.preventDefault(); // Prevent form submission for validation
+        let valid = true;
+        let firstInvalid = null;
+
+        // Find all required inputs/selects that are visible
+        const requiredFields = form.querySelectorAll("input[required], select[required], textarea[required]");
+
+        requiredFields.forEach(field => {
+          const isVisible = field.offsetParent !== null; // true if not hidden with display:none
+          
+          if (isVisible && !field.value.trim() || field.type === "checkbox" && !field.checked) {
+            valid = false;
+
+            // Add error styling
+            field.classList.add("border-red-500");
+
+            // Optionally insert error message (if not already)
+            if (!field.parentNode.getElementsByClassName("error-msg").length) {
+              const msg = document.createElement("div");
+              msg.className = "error-msg text-red-500 text-xs mt-1";
+              msg.innerText = "This field is required";
+              field.parentNode.appendChild(msg);
+            }
+
+            // focus the first invalid field
+            if (!firstInvalid) firstInvalid = field;
+          } else {
+            // Remove error state if corrected
+            field.classList.remove("border-red-500");
+            const err_div = field.parentNode.getElementsByClassName("error-msg")
+
+            if (!!err_div.length) {
+              err_div.item(0).remove();
+            }
+          }
+        });
+
+        if (!valid) {
+          e.preventDefault();
+          firstInvalid.focus();
+          return
+        }
+        form.submit();
+      });
+    });
+  </script>
+
+</body>
+
+</html>
