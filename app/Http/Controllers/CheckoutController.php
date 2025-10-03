@@ -63,6 +63,12 @@ class CheckoutController extends Controller
             ]);
 
             $paymentData = $paymentService->initializePayment($order, $validated);
+
+            $order->update([
+                'transaction_ref' => $paymentData['transactionReference'],
+                'cart_id' => $cart->id
+            ]);
+
             Log::info('Payment initialized', [
                 'order_id' => $order->id,
                 'payment' => $paymentData,
@@ -85,15 +91,27 @@ class CheckoutController extends Controller
     {
         try {
             $order = app(PaymentService::class)->handleCallback($request->all());
-
+            // redirect to orders confirmation page
             if ($order->payment_status->value === 'paid') {
-                return redirect()->route('checkout', $order->id)
-                    ->with('success', 'Payment successful! Your order is confirmed.');
+
+                return redirect()->route('order')
+                    ->with([
+                    'success' => 'Payment successful! Your order is confirmed.',
+                    'order_number' => $order->order_number,
+                    'order_amount' => $order->total,
+                    'estimated_delivery' => $order->delivery_min_days . ' - ' . $order->delivery_max_days . ' Business Days'
+                ]);
             }
 
-            return redirect()->route('checkout', $order->id)
-                ->with('error', 'Payment failed. Please try again.');
+            return redirect()->route('order')
+                ->with([
+                    'error' => 'Payment failed. Please try again.',
+                    'order_number' => $order->order_number,
+                    'order_amount' => $order->total,
+                ]);
         } catch (\Throwable $th) {
+            // on error, consider deleting the order as there is no point in leaving a pending order with an invalid transaction reference
+            // instead of just redirecting to checkout page
             Log::error('Payment callback failed', ['error' => $th->getMessage()]);
             return redirect()->route('checkout')->with('error', 'Payment verification failed.');
         }

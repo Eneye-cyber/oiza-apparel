@@ -6,8 +6,9 @@
         <a href="tel:(+123)4567890" class="font-dm-sans text-black opacity-75 hover:opacity-100">( +123 ) 456
             7890</a>
       </div>
-      <div>
-        <a href="{{ route('contact') }}" class="text-black opacity-75 hover:opacity-100">Customer Support</a>
+      <div class="flex divide-x divide-black/75">
+        <a href="{{ route('order') }}" class="text-black opacity-75 hover:opacity-100 pr-1.5">Order tracking</a>
+        <a href="{{ route('contact') }}" class="text-black opacity-75 hover:opacity-100 pl-1.5">Customer Support</a>
       </div>
     </div>
 

@@ -310,6 +310,14 @@ class PageController extends Controller
         return view('pages.shop.category', compact('products', 'category', 'sidebarCategories', 'meta', 'breadcrumbs'));
     }
 
+    public function order(Request $request)
+    {
+         $ref = $request->query('ref'); // or $request->get('ref')
+        Log::info("order uuid: " . $ref);
+
+        return view('pages.order');
+    }
+
     public function privacy()
     {
         abort(404); // Returns a 404 Not Found response

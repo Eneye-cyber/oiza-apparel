@@ -27,9 +27,9 @@ class PaymentService
         $response = Monnify::transactions()->initialise($payload);
         // Log::info('Monnify initialization response', $response);
         if (
-            empty($response['status']) || 
-            $response['status'] !== 200 || 
-            empty($response['body']['requestSuccessful']) || 
+            empty($response['status']) ||
+            $response['status'] !== 200 ||
+            empty($response['body']['requestSuccessful']) ||
             $response['body']['requestSuccessful'] !== true
         ) {
             Log::error('Monnify initialization failed', $response);
@@ -38,24 +38,28 @@ class PaymentService
 
         // Return only responseBody
         return $response['body']['responseBody'] ?? [];
-
     }
 
     public function handleCallback(array $payload)
     {
-        $order = Order::where('order_number', $payload['paymentReference'])->firstOrFail();
+        Log::info(["payload" => $payload]);
+        $paymentReference = $payload['paymentReference'];
+        $order = Order::where('order_number', $paymentReference)->firstOrFail();
+        $transactionReference = $order->transaction_ref;
+        $transaction = Monnify::transactions()->status($transactionReference);
 
-        if ($payload['paymentStatus'] === 'PAID') {
-            $order->update([
-                'payment_status' => PaymentStatus::Success,
-                'status'         => OrderStatus::Processing,
-            ]);
+        Log::info(["transaction" => $transaction]);
+
+        $paymentStatus = $transaction['body']['responseBody']['paymentStatus'];
+        Log::info(["paymentStatus" => $paymentStatus]);
+
+        if ($paymentStatus === 'PAID') {
+            // Let OrderService handle domain logic
+            app(OrderService::class)->completeCheckout($order);
         } else {
-            $order->update([
-                'payment_status' => PaymentStatus::Failed,
-            ]);
+            $order->update(['payment_status' => PaymentStatus::Failed]);
         }
 
-        return $order;
+        return $order->refresh();
     }
 }

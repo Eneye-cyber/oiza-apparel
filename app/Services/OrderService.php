@@ -5,6 +5,7 @@ namespace App\Services;
 use App\Enums\OrderStatus;
 use App\Enums\PaymentMethod;
 use App\Enums\PaymentStatus;
+use App\Events\OrderPaid;
 use App\Models\Orders\Order;
 use App\Models\Shipping\ShippingState;
 use Illuminate\Support\Collection;
@@ -48,19 +49,22 @@ class OrderService
       'type'     => 'shipping',
     ];
 
-    return DB::transaction(function () use ($validated, $subtotal, $shippingCost, $total, $shippingData, $cartItems) {
+    return DB::transaction(function () use ($validated, $subtotal, $shippingMethod, $total, $shippingData, $cartItems) {
       // Create order
       $order = Order::create([
         'guest_email'    => $validated['email'],
         'subtotal'       => $subtotal,
         'discount'       => 0, // TODO: add coupons/discount service
         'tax'            => 0, // TODO: tax calculation
-        'shipping'       => $shippingCost,
+        'shipping'       => $shippingMethod['delivery_cost'] ?? 0,
         'total'          => $total,
         'status'         => OrderStatus::Pending,
         'payment_method' => PaymentMethod::Gateway, // <- default to gateway, can be updated later
         'order_channel'  => 'website',
         'payment_status' => PaymentStatus::Pending,
+        'shipping_type' => $shippingMethod['name'],
+        'delivery_min_days' => $shippingMethod['delivery_min_days'],
+        'delivery_max_days' => $shippingMethod['delivery_max_days']
       ]);
 
       // Addresses
@@ -91,6 +95,35 @@ class OrderService
         'created_at' => now(),
         'updated_at' => now(),
       ])->toArray());
+
+      return $order;
+    });
+  }
+
+  /**
+   * Mark an order as paid and clear its cart items.
+   */
+  public function completeCheckout(Order $order): Order
+  {
+    return DB::transaction(function () use ($order) {
+      //  Update order status
+      if ($order->payment_status !== PaymentStatus::Success->value) {
+        $order->payment_status = PaymentStatus::Success->value;
+      }
+
+      if (is_null($order->confirmed_at)) {
+        $order->confirmed_at = now();
+      }
+
+      $order->save();
+
+      //  Clear cart items
+      if ($order->cart) {
+        $order->cart->items()->delete();
+      }
+
+      //  Raise domain event
+      event(new OrderPaid($order));
 
       return $order;
     });
