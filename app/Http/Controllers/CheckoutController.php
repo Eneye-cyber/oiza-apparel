@@ -2,17 +2,12 @@
 
 namespace App\Http\Controllers;
 
-use App\Enums\OrderStatus;
-use App\Enums\PaymentMethod;
-use App\Enums\PaymentStatus;
 use App\Http\Requests\StoreOrderRequest;
-use App\Models\Orders\Order;
-use App\Models\Shipping\ShippingState;
 use Illuminate\Http\Request;
 use App\Services\CartService;
 use App\Services\OrderService;
+use App\Services\PaymentService;
 use Illuminate\Support\Facades\Log;
-use Illuminate\Support\Facades\DB;
 
 
 class CheckoutController extends Controller
@@ -49,7 +44,7 @@ class CheckoutController extends Controller
     }
 
 
-    public function store(StoreOrderRequest $request)
+    public function store(StoreOrderRequest $request, PaymentService $paymentService)
     {
         $validated = $request->validated();
 
@@ -67,13 +62,40 @@ class CheckoutController extends Controller
                 'items'    => $order->items()->count(),
             ]);
 
-            return redirect()->route('checkout')->with('success', 'Order placed successfully!');
+            $paymentData = $paymentService->initializePayment($order, $validated);
+            Log::info('Payment initialized', [
+                'order_id' => $order->id,
+                'payment' => $paymentData,
+                'payment_ref' => $paymentData['paymentReference'] ?? null,
+            ]);
+
+            // TODO: Handle cases where redirecUrl is not working
+            return redirect()->away($paymentData['checkoutUrl']);
+
         } catch (\Throwable $th) {
             Log::error('Order creation failed', [
                 'error' => $th->getMessage(),
                 'trace' => $th->getTraceAsString(),
             ]);
             return redirect()->route('checkout')->with('error', 'Something went wrong. Please try again.');
+        }
+    }
+
+    public function paymentCallback(Request $request)
+    {
+        try {
+            $order = app(PaymentService::class)->handleCallback($request->all());
+
+            if ($order->payment_status->value === 'paid') {
+                return redirect()->route('checkout', $order->id)
+                    ->with('success', 'Payment successful! Your order is confirmed.');
+            }
+
+            return redirect()->route('checkout', $order->id)
+                ->with('error', 'Payment failed. Please try again.');
+        } catch (\Throwable $th) {
+            Log::error('Payment callback failed', ['error' => $th->getMessage()]);
+            return redirect()->route('checkout')->with('error', 'Payment verification failed.');
         }
     }
 }

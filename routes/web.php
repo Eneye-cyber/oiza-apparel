@@ -59,3 +59,5 @@ Route::prefix('v1')->group(function () {
   Route::get('/countries/{code?}', [ApiController::class, 'countries'])->name('country.index');
   Route::get('/shipping/{type}/{id}', [ApiController::class, 'shipping'])->name('shipping.index');
 });
+
+Route::get('/payment/callback', [CheckoutController::class, 'paymentCallback'])->name('payment.callback');
