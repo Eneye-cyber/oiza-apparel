@@ -1,10 +1,14 @@
 <?php
 
+use App\Http\Controllers\ApiController;
 use App\Http\Controllers\ContactController;
 use App\Http\Controllers\PageController;
 use Illuminate\Support\Facades\Route;
 // routes/web.php
 use App\Http\Controllers\CartController;
+use App\Http\Controllers\CheckoutController;
+use App\Mail\OrderConfirmationMail;
+use App\Models\Orders\Order;
 use App\Models\Products\Product;
 use Illuminate\Http\Request;
 
@@ -25,6 +29,8 @@ Route::prefix('cart')->group(function () {
 });
 
 
+
+
 Route::get('/', [PageController::class, 'home'])->name('home');
 Route::get('/shop', [PageController::class, 'shop'])->name('shop');
 
@@ -39,6 +45,13 @@ Route::get('product/{product:slug}', [PageController::class, 'product'])->name('
 Route::get('/contact', [ContactController::class, 'index'])->name('contact');
 Route::post('/contact', [ContactController::class, 'submit'])->name('contact.submit');
 
+// Checkout Route
+Route::get('/checkout', [CheckoutController::class, 'index'])->name('checkout');
+Route::post('/checkout', [CheckoutController::class, 'store'])->name('checkout.store');
+
+Route::get('/order', [PageController::class, 'order'])->name('order');
+
+
 // Cart Route
 // Route::get('/cart', [PageController::class, 'index'])->name('cart');
 
@@ -46,3 +59,17 @@ Route::post('/contact', [ContactController::class, 'submit'])->name('contact.sub
 Route::get('/privacy', [PageController::class, 'privacy'])->name('privacy');
 Route::get('/terms', [PageController::class, 'terms'])->name('terms');
 Route::get('/sitemap', [PageController::class, 'sitemap'])->name('sitemap');
+
+Route::prefix('v1')->group(function () {
+  Route::get('/countries/{code?}', [ApiController::class, 'countries'])->name('country.index');
+  Route::get('/shipping/{type}/{id}', [ApiController::class, 'shipping'])->name('shipping.index');
+});
+
+Route::get('/payment/callback', [CheckoutController::class, 'paymentCallback'])->name('payment.callback');
+
+
+Route::get('/mailable', function () {
+    $invoice = Order::find(1);
+ 
+    return new OrderConfirmationMail($invoice);
+});

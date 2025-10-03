@@ -5,22 +5,25 @@ namespace App\Services;
 use App\Models\Cart;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Str;
+use Illuminate\Support\Facades\Log;
 
 class CartService
 {
     public function getCart(): Cart
     {
-        if (Auth::check()) {
-            return Cart::firstOrCreate(['user_id' => Auth::id()]);
-        }
+        // if (Auth::check()) {
+        //     return Cart::firstOrCreate(['user_id' => Auth::id()]);
+        // }
 
         $sessionId = session()->get('cart_session_id');
         if (!$sessionId) {
+            Log::info('No sessionId');
             $sessionId = (string) Str::uuid();
             session(['cart_session_id' => $sessionId]);
         }
+            Log::info(['sessionId' => $sessionId]);
 
-        return Cart::firstOrCreate(['session_id' => $sessionId]);
+        return Cart::with('items')->firstOrCreate(['session_id' => $sessionId]);
     }
 
     public function addItem($product, int $quantity = 1): void
@@ -38,18 +41,21 @@ class CartService
                 'price' => $product->price, // snapshot price
             ]);
         }
+        $cart->touch();
     }
 
     public function removeItem(int $itemId): void
     {
         $cart = $this->getCart();
         $cart->items()->where('id', $itemId)->delete();
+        $cart->touch();
     }
 
     public function clearCart(): void
     {
         $cart = $this->getCart();
         $cart->items()->delete();
+        $cart->touch();
     }
 
     public function mergeCartOnLogin($user): void

@@ -12,7 +12,8 @@
         "faisal50x/blade-ionicons": "^1.1",
         "filament/filament": "^4.0",
         "laravel/framework": "^12.0",
-        "laravel/tinker": "^2.10.1"
+        "laravel/tinker": "^2.10.1",
+        "monnify/monnify-laravel": "^1.0"
     },
     "require-dev": {
         "fakerphp/faker": "^1.23",

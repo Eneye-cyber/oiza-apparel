@@ -1,0 +1,65 @@
+<?php
+
+namespace App\Services;
+
+use App\Models\Orders\Order;
+use App\Enums\PaymentStatus;
+use App\Enums\OrderStatus;
+use Illuminate\Support\Facades\Log;
+use Monnify\MonnifyLaravel\Facades\Monnify;
+
+class PaymentService
+{
+    public function initializePayment(Order $order, array $validated)
+    {
+        // Prepare Monnify payload
+        $payload = [
+            "amount" => $order->total,
+            "customerName" => $order->shippingAddress->name,
+            "customerEmail" => $order->guest_email,
+            "paymentReference" => $order->order_number,
+            "paymentDescription" => "Order #{$order->order_number}: Purchase at Oiza Apparels",
+            "currencyCode" => "NGN",
+            'contractCode' => config('monnify.contract_code'),
+            "redirectUrl" => route('payment.callback'),
+        ];
+
+        $response = Monnify::transactions()->initialise($payload);
+        // Log::info('Monnify initialization response', $response);
+        if (
+            empty($response['status']) ||
+            $response['status'] !== 200 ||
+            empty($response['body']['requestSuccessful']) ||
+            $response['body']['requestSuccessful'] !== true
+        ) {
+            Log::error('Monnify initialization failed', $response);
+            throw new \RuntimeException('Payment initialization failed');
+        }
+
+        // Return only responseBody
+        return $response['body']['responseBody'] ?? [];
+    }
+
+    public function handleCallback(array $payload)
+    {
+        Log::info(["payload" => $payload]);
+        $paymentReference = $payload['paymentReference'];
+        $order = Order::where('order_number', $paymentReference)->firstOrFail();
+        $transactionReference = $order->transaction_ref;
+        $transaction = Monnify::transactions()->status($transactionReference);
+
+        Log::info(["transaction" => $transaction]);
+
+        $paymentStatus = $transaction['body']['responseBody']['paymentStatus'];
+        Log::info(["paymentStatus" => $paymentStatus]);
+
+        if ($paymentStatus === 'PAID') {
+            // Let OrderService handle domain logic
+            app(OrderService::class)->completeCheckout($order);
+        } else {
+            $order->update(['payment_status' => PaymentStatus::Failed]);
+        }
+
+        return $order->refresh();
+    }
+}

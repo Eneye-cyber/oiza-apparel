@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "3babbbfd408bfb0df797cb96c22d20ba",
+    "content-hash": "dc09734ef0d1f7dc6cbe67f7f77ce898",
     "packages": [
         {
             "name": "anourvalar/eloquent-serialize",
@@ -3370,6 +3370,69 @@
                 "source": "https://github.com/Masterminds/html5-php/tree/2.10.0"
             },
             "time": "2025-07-25T09:04:22+00:00"
+        },
+        {
+            "name": "monnify/monnify-laravel",
+            "version": "1.0.0",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/Monnify/monnify-laravel.git",
+                "reference": "53ee0903177058b11052dc83d7e3395ea97fb3f1"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/Monnify/monnify-laravel/zipball/53ee0903177058b11052dc83d7e3395ea97fb3f1",
+                "reference": "53ee0903177058b11052dc83d7e3395ea97fb3f1",
+                "shasum": ""
+            },
+            "require": {
+                "guzzlehttp/guzzle": "^7.0",
+                "illuminate/support": "^8.0|^9.0|^10.0|^11.0|^12.0",
+                "illuminate/validation": "^8.0|^9.0|^10.0|^11.0|^12.0",
+                "php": "^8.1"
+            },
+            "require-dev": {
+                "orchestra/testbench": "^8.34"
+            },
+            "type": "library",
+            "extra": {
+                "laravel": {
+                    "aliases": {
+                        "Monnify": "Monnify\\MonnifyLaravel\\Facades\\Monnify"
+                    },
+                    "providers": [
+                        "Monnify\\MonnifyLaravel\\MonnifyServiceProvider"
+                    ]
+                }
+            },
+            "autoload": {
+                "psr-4": {
+                    "Monnify\\MonnifyLaravel\\": "src/"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "authors": [
+                {
+                    "name": "Babatunde Adelabu",
+                    "email": "adelabu4fred@gmail.com",
+                    "homepage": "https://github.com/fredneutron"
+                }
+            ],
+            "description": "A Laravel Monnify Package",
+            "homepage": "https://github.com/fredneutron/monnify-laravel",
+            "keywords": [
+                "Monnify-laravel",
+                "laravel",
+                "monnify",
+                "payment gateway"
+            ],
+            "support": {
+                "source": "https://github.com/Monnify/monnify-laravel/tree/v1.0.0"
+            },
+            "time": "2025-04-16T10:38:05+00:00"
         },
         {
             "name": "monolog/monolog",
