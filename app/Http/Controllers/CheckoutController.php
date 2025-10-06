@@ -77,7 +77,6 @@ class CheckoutController extends Controller
 
             // TODO: Handle cases where redirecUrl is not working
             return redirect()->away($paymentData['checkoutUrl']);
-
         } catch (\Throwable $th) {
             Log::error('Order creation failed', [
                 'error' => $th->getMessage(),
@@ -96,11 +95,11 @@ class CheckoutController extends Controller
 
                 return redirect()->route('order')
                     ->with([
-                    'success' => 'Payment successful! Your order is confirmed.',
-                    'order_number' => $order->order_number,
-                    'order_amount' => $order->total,
-                    'estimated_delivery' => $order->delivery_min_days . ' - ' . $order->delivery_max_days . ' Business Days'
-                ]);
+                        'success' => 'Payment successful! Your order is confirmed.',
+                        'order_number' => $order->order_number,
+                        'order_amount' => $order->total,
+                        'estimated_delivery' => $order->delivery_min_days . ' - ' . $order->delivery_max_days . ' Business Days'
+                    ]);
             }
 
             return redirect()->route('order')
@@ -114,6 +113,28 @@ class CheckoutController extends Controller
             // instead of just redirecting to checkout page
             Log::error('Payment callback failed', ['error' => $th->getMessage()]);
             return redirect()->route('checkout')->with('error', 'Payment verification failed.');
+        }
+    }
+
+    public function monnifyWebhook(Request $request)
+    {
+        $payload = $request->all();
+        Log::info('Monnify webhook received', $payload);
+
+        try {
+            $order = app(PaymentService::class)->handleWebhook($payload);
+
+            return response()->json([
+                'success' => true,
+                'order_id' => $order->id,
+                'payment_status' => $order->payment_status->value,
+            ]);
+        } catch (\Throwable $th) {
+            Log::error('Webhook handling failed', [
+                'error' => $th->getMessage(),
+                'payload' => $payload,
+            ]);
+            return response()->json(['success' => false], 500);
         }
     }
 }
