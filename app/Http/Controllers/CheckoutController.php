@@ -2,17 +2,12 @@
 
 namespace App\Http\Controllers;
 
-use App\Enums\OrderStatus;
-use App\Enums\PaymentMethod;
-use App\Enums\PaymentStatus;
 use App\Http\Requests\StoreOrderRequest;
-use App\Models\Orders\Order;
-use App\Models\Shipping\ShippingState;
 use Illuminate\Http\Request;
 use App\Services\CartService;
 use App\Services\OrderService;
+use App\Services\PaymentService;
 use Illuminate\Support\Facades\Log;
-use Illuminate\Support\Facades\DB;
 
 
 class CheckoutController extends Controller
@@ -49,7 +44,7 @@ class CheckoutController extends Controller
     }
 
 
-    public function store(StoreOrderRequest $request)
+    public function store(StoreOrderRequest $request, PaymentService $paymentService)
     {
         $validated = $request->validated();
 
@@ -67,13 +62,79 @@ class CheckoutController extends Controller
                 'items'    => $order->items()->count(),
             ]);
 
-            return redirect()->route('checkout')->with('success', 'Order placed successfully!');
+            $paymentData = $paymentService->initializePayment($order, $validated);
+
+            $order->update([
+                'transaction_ref' => $paymentData['transactionReference'],
+                'cart_id' => $cart->id
+            ]);
+
+            Log::info('Payment initialized', [
+                'order_id' => $order->id,
+                'payment' => $paymentData,
+                'payment_ref' => $paymentData['paymentReference'] ?? null,
+            ]);
+
+            // TODO: Handle cases where redirecUrl is not working
+            return redirect()->away($paymentData['checkoutUrl']);
         } catch (\Throwable $th) {
             Log::error('Order creation failed', [
                 'error' => $th->getMessage(),
                 'trace' => $th->getTraceAsString(),
             ]);
             return redirect()->route('checkout')->with('error', 'Something went wrong. Please try again.');
+        }
+    }
+
+    public function paymentCallback(Request $request)
+    {
+        try {
+            $order = app(PaymentService::class)->handleCallback($request->all());
+            // redirect to orders confirmation page
+            if ($order->payment_status->value === 'paid') {
+
+                return redirect()->route('order')
+                    ->with([
+                        'success' => 'Payment successful! Your order is confirmed.',
+                        'order_number' => $order->order_number,
+                        'order_amount' => $order->total,
+                        'estimated_delivery' => $order->delivery_min_days . ' - ' . $order->delivery_max_days . ' Business Days'
+                    ]);
+            }
+
+            return redirect()->route('order')
+                ->with([
+                    'error' => 'Payment failed. Please try again.',
+                    'order_number' => $order->order_number,
+                    'order_amount' => $order->total,
+                ]);
+        } catch (\Throwable $th) {
+            // on error, consider deleting the order as there is no point in leaving a pending order with an invalid transaction reference
+            // instead of just redirecting to checkout page
+            Log::error('Payment callback failed', ['error' => $th->getMessage()]);
+            return redirect()->route('checkout')->with('error', 'Payment verification failed.');
+        }
+    }
+
+    public function monnifyWebhook(Request $request)
+    {
+        $payload = $request->all();
+        Log::info('Monnify webhook received', $payload);
+
+        try {
+            $order = app(PaymentService::class)->handleWebhook($payload);
+
+            return response()->json([
+                'success' => true,
+                'order_id' => $order->id,
+                'payment_status' => $order->payment_status->value,
+            ]);
+        } catch (\Throwable $th) {
+            Log::error('Webhook handling failed', [
+                'error' => $th->getMessage(),
+                'payload' => $payload,
+            ]);
+            return response()->json(['success' => false], 500);
         }
     }
 }

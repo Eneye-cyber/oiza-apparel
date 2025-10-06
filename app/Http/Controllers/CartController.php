@@ -36,7 +36,7 @@ class CartController extends Controller
             $item->product->cover_media = $item->product->cover_media
                 ? Storage::disk(env('APP_DISK', 'local'))->url($item->product->cover_media)
                 : null;
-            Log::info($item);
+            // Log::info(['controller' => 'CartController', 'method' => 'index', 'data' => $item]);
             return $item;
         });
 
