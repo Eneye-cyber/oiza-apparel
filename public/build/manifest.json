@@ -7,6 +7,14 @@
       "app.css"
     ]
   },
+  "resources/css/checkout.css": {
+    "file": "assets/checkout-BePe4aYB.css",
+    "src": "resources/css/checkout.css",
+    "isEntry": true,
+    "names": [
+      "checkout.css"
+    ]
+  },
   "resources/js/app.js": {
     "file": "assets/app-C0G0cght.js",
     "name": "app",
