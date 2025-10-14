@@ -13,8 +13,8 @@ php artisan migrate --force
 echo "Running seeders..."
 php artisan db:seed  --force
 
-echo "Caching config"
-php artisan config:cache
+# echo "Caching config"
+# php artisan config:cache
 
 echo "Caching route"
 php artisan route:cache
