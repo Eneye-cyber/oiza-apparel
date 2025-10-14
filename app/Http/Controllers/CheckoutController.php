@@ -8,7 +8,7 @@ use App\Services\CartService;
 use App\Services\OrderService;
 use App\Services\PaymentService;
 use Illuminate\Support\Facades\Log;
-
+use Illuminate\Support\MessageBag;
 
 class CheckoutController extends Controller
 {
@@ -111,8 +111,10 @@ class CheckoutController extends Controller
         } catch (\Throwable $th) {
             // on error, consider deleting the order as there is no point in leaving a pending order with an invalid transaction reference
             // instead of just redirecting to checkout page
-            Log::error('Payment callback failed', ['error' => $th->getMessage()]);
-            return redirect()->route('checkout')->with('error', 'Payment verification failed.');
+            Log::error('Payment callback failed', ['error' =>  $th->getMessage()]);
+            // Create a MessageBag with the field name 'paymentReference'
+            $errors = new MessageBag(['paymentReference' => 'Order verification failed.']);
+            return redirect()->route('order')->withErrors($errors)->withInput();;
         }
     }
 
