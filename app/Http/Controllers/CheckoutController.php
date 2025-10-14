@@ -24,7 +24,13 @@ class CheckoutController extends Controller
 
     public function index()
     {
-        $cart = $this->cartService->getCart()->load([
+        $cart = $this->cartService->getCart();
+
+        if (!$cart) {
+            Log::error('Cart could not be retrieved.');
+            return redirect()->route('shop')->with('error', 'Could not retrieve your cart.');
+        }
+        $cart = $cart->load([
             'items.product' => function ($query) {
                 $query->select('id', 'cover_media', 'name', 'category_id', 'main_color');
             },
@@ -35,10 +41,10 @@ class CheckoutController extends Controller
 
         // No need to map for URL conversion anymore
         $cartItems = $cart->items;
-        $subtotal = $cartItems->sum(fn($i) => $i->price * $i->quantity);
         if ($cartItems->isEmpty()) {
             return redirect()->route('shop')->with('error', 'Your cart is empty.');
         }
+        $subtotal = $cartItems->sum(fn($i) => $i->price * $i->quantity);
 
         return view('pages.checkout', compact('cartItems', 'subtotal'));
     }
@@ -77,7 +83,6 @@ class CheckoutController extends Controller
 
             // TODO: Handle cases where redirecUrl is not working
             return redirect()->away($paymentData['checkoutUrl']);
-
         } catch (\Throwable $th) {
             Log::error('Order creation failed', [
                 'error' => $th->getMessage(),
@@ -96,11 +101,11 @@ class CheckoutController extends Controller
 
                 return redirect()->route('order')
                     ->with([
-                    'success' => 'Payment successful! Your order is confirmed.',
-                    'order_number' => $order->order_number,
-                    'order_amount' => $order->total,
-                    'estimated_delivery' => $order->delivery_min_days . ' - ' . $order->delivery_max_days . ' Business Days'
-                ]);
+                        'success' => 'Payment successful! Your order is confirmed.',
+                        'order_number' => $order->order_number,
+                        'order_amount' => $order->total,
+                        'estimated_delivery' => $order->delivery_min_days . ' - ' . $order->delivery_max_days . ' Business Days'
+                    ]);
             }
 
             return redirect()->route('order')

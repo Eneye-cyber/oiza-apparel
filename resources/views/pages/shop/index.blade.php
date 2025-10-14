@@ -199,6 +199,9 @@
         </div>
     </article>
 
+    @if (session('error'))
+            <x-toast type="error" message="{{ session('error') }}" />
+        @endif
     <script>
         document.addEventListener('DOMContentLoaded', function() {
             const form = document.getElementById('filter-form');

@@ -6,24 +6,45 @@ use App\Models\Cart;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Str;
 use Illuminate\Support\Facades\Log;
+use Illuminate\Database\QueryException;
+use Throwable;
 
 class CartService
 {
-    public function getCart(): Cart
+    public function getCart(): ?Cart
     {
-        // if (Auth::check()) {
-        //     return Cart::firstOrCreate(['user_id' => Auth::id()]);
-        // }
+        try {
+            // Attempt to get or create a session ID
+            $sessionId = session()->get('cart_session_id');
 
-        $sessionId = session()->get('cart_session_id');
-        if (!$sessionId) {
-            Log::info('No sessionId');
-            $sessionId = (string) Str::uuid();
-            session(['cart_session_id' => $sessionId]);
+            if (!$sessionId) {
+                Log::info('Cart session not found, generating new session ID.');
+                $sessionId = (string) Str::uuid();
+                session(['cart_session_id' => $sessionId]);
+            }
+
+            Log::info(['cart_session_id' => $sessionId]);
+
+            // Try to find or create the cart for this session
+            $cart = Cart::with('items')->firstOrCreate(['session_id' => $sessionId]);
+
+            return $cart;
+        } catch (QueryException $e) {
+            // Handles database-related issues
+            Log::error('Database error while fetching/creating cart.', [
+                'error' => $e->getMessage(),
+                'session_id' => $sessionId ?? null,
+            ]);
+        } catch (Throwable $e) {
+            // Handles all other unexpected errors
+            Log::error('Unexpected error in getCart()', [
+                'error' => $e->getMessage(),
+                'session_id' => $sessionId ?? null,
+            ]);
         }
-            Log::info(['sessionId' => $sessionId]);
 
-        return Cart::with('items')->firstOrCreate(['session_id' => $sessionId]);
+        // Return null or handle gracefully if something went wrong
+        return null;
     }
 
     public function addItem($product, int $quantity = 1): void
