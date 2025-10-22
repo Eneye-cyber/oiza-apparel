@@ -54,6 +54,8 @@
 <body class="bg-white text-black overflow-x-clip">
   <x-header />
   <x-cart-drawer />
+  @yield('modal')
+
 
   <main class="font-dm-sans min-h-80">
     @yield('content')

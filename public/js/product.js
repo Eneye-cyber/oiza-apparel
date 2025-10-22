@@ -5,17 +5,17 @@ document.addEventListener("DOMContentLoaded", () => {
   const qtyInput = document.getElementById("quantity");
 
   /** Change main image */
-  function changeMainImage(imageUrl, variantId, button) {
+  function changeMainImage(imageUrl, variantId) {
     mainImage.src = imageUrl;
     mainImage.alt = productName;
 
     document.querySelectorAll(".thumbnail").forEach((thumb) => {
-      thumb.classList.remove("border-2", "border-gold");
-      thumb.classList.add("cursor-pointer");
+      if (thumb.dataset.image !== imageUrl) {
+        return thumb.classList.remove("selected");
+      }
+      thumb.classList.add("selected");
     });
 
-    button.classList.add("border-2", "border-gold");
-    button.classList.remove("cursor-pointer");
 
     if (variantId) {
       const variant = variants.find((v) => v.id == variantId);
@@ -76,28 +76,6 @@ document.addEventListener("DOMContentLoaded", () => {
     }
   }
 
-  /** Get selected variant based on attributes */
-  function getSelectedVariant() {
-    const selectedAttributes = {};
-    document.querySelectorAll('input[type="hidden"]').forEach((input) => {
-      if (input.id) selectedAttributes[input.id] = input.value;
-    });
-
-    return variants.find((variant) =>
-      Object.entries(selectedAttributes).every(([slug, value]) => {
-        const attrName = variants
-          .flatMap((v) => v.attributes)
-          .find((attr) => attr.attribute_name.replace(/[^a-zA-Z0-9]/g, "-").toLowerCase() === slug)?.attribute_name;
-
-        return (
-          !attrName ||
-          variant.attributes.some(
-            (attr) => attr.attribute_name === attrName && attr.attribute_value === value
-          )
-        );
-      })
-    );
-  }
 
   /** Quantity controls */
   document.querySelectorAll(".qty-btn").forEach((btn) => {
@@ -112,23 +90,15 @@ document.addEventListener("DOMContentLoaded", () => {
   /** Thumbnails */
   document.querySelectorAll(".thumbnail").forEach((thumb) => {
     thumb.addEventListener("click", () =>
-      changeMainImage(thumb.dataset.image, thumb.dataset.variantId, thumb)
+      changeMainImage(thumb.dataset.image, thumb.dataset.variantId)
     );
   });
 
-  /** Attribute options */
-  document.querySelectorAll("[class*='-option']").forEach((btn) => {
-    btn.addEventListener("click", () => {
-      const type = btn.className.match(/([a-z0-9-]+)-option/)[1];
-      const value = btn.dataset.value;
-      const isColor = btn.classList.contains("color-swatch");
-      selectVariantOption(type, value, btn, isColor);
-    });
-  });
 
   /** Add to Cart */
   document.querySelector(".add-to-cart").addEventListener("click", async (e) => {
     const productId = e.target.dataset.productId;
+    console.log("element", e.target)
     // const selectedVariant = getSelectedVariant();
 
     // if (!selectedVariant) {
@@ -150,5 +120,102 @@ document.addEventListener("DOMContentLoaded", () => {
 
     fetchCart();
     document.getElementById("cart-overlay").classList.add("is-visible");
+  });
+
+  const selectTrigger = document.getElementById('selectTrigger');
+  const dropdownOptions = document.getElementById('dropdownOptions');
+  const dropdownIcon = document.getElementById('dropdownIcon');
+  const selectedImage = document.getElementById('selectedImage');
+  const selectedName = document.getElementById('selectedName');
+  const nativeSelect = document.getElementById('nativeSelect');
+
+  let isOpen = false;
+
+  // Toggle dropdown
+  selectTrigger?.addEventListener('click', () => {
+    isOpen = !isOpen;
+    dropdownOptions.classList.toggle('hidden', !isOpen);
+    dropdownIcon.style.transform = isOpen ? 'rotate(180deg)' : 'rotate(0deg)';
+
+    if (isOpen) {
+      document.addEventListener('click', closeDropdownOnOutsideClick);
+    } else {
+      document.removeEventListener('click', closeDropdownOnOutsideClick);
+    }
+  });
+
+  // Handle option selection
+  document.querySelectorAll('.option-item').forEach(option => {
+    option.addEventListener('click', (e) => {
+      const value = e.currentTarget.dataset.value;
+      const imgSrc = e.currentTarget.querySelector('img').src;
+      const name = e.currentTarget.querySelector('span').textContent;
+
+      // Update display
+      selectedImage.classList.remove('hidden');
+      selectedImage.src = imgSrc;
+      selectedName.textContent = name;
+      nativeSelect.value = value;
+
+      // Update main image
+      changeMainImage(imgSrc, value);
+
+      // Close dropdown
+      isOpen = false;
+      dropdownOptions.classList.add('hidden');
+      dropdownIcon.style.transform = 'rotate(0deg)';
+
+      // Remove outside click listener
+      document.removeEventListener('click', closeDropdownOnOutsideClick);
+    });
+  });
+
+  // Close dropdown when clicking outside
+  function closeDropdownOnOutsideClick(e) {
+    if (!selectTrigger.contains(e.target) && !dropdownOptions.contains(e.target)) {
+      isOpen = false;
+      dropdownOptions.classList.add('hidden');
+      dropdownIcon.style.transform = 'rotate(0deg)';
+      document.removeEventListener('click', closeDropdownOnOutsideClick);
+    }
+  }
+
+  // Close dropdown on Escape key
+  document.addEventListener('keydown', (e) => {
+    if (e.key === 'Escape' && isOpen) {
+      isOpen = false;
+      dropdownOptions.classList.add('hidden');
+      dropdownIcon.style.transform = 'rotate(0deg)';
+      document.removeEventListener('click', closeDropdownOnOutsideClick);
+    }
+  });
+  // Keyboard navigation
+  dropdownOptions.addEventListener('keydown', (e) => {
+    const options = Array.from(document.querySelectorAll('.option-item'));
+    const currentFocus = document.activeElement;
+    let currentIndex = options.indexOf(currentFocus);
+
+    switch (e.key) {
+      case 'ArrowDown':
+        e.preventDefault();
+        const nextIndex = (currentIndex + 1) % options.length;
+        options[nextIndex].focus();
+        break;
+      case 'ArrowUp':
+        e.preventDefault();
+        const prevIndex = (currentIndex - 1 + options.length) % options.length;
+        options[prevIndex].focus();
+        break;
+      case 'Enter':
+        if (currentFocus.classList.contains('option-item')) {
+          currentFocus.click();
+        }
+        break;
+    }
+  });
+
+  // Make options focusable
+  document.querySelectorAll('.option-item').forEach(option => {
+    option.setAttribute('tabindex', '0');
   });
 });

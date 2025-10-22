@@ -13,6 +13,8 @@
     --acme-gold: #b59a6c;
     --acme-whitesmoke: #f5f5f5;
     --acme-blue: #6cb3b5;
+    --acme-background: oklch(0.98 0.002 85);
+    --acme-muted-foreground: oklch(0.5 0 0);
 }
 
 @theme {
@@ -27,6 +29,8 @@
     --color-gold: var(--acme-gold);
     --color-primary: var(--acme-gold);
     --color-whitesmoke: var(--acme-whitesmoke);
+    --color-background: var(--acme-background);
+    --color-muted-foreground: var(--acme-muted-foreground);
 }
 
 @layer base {
@@ -38,6 +42,20 @@
         overflow-x: hidden;
         max-width: 100%;
         color: var(--acme-black);
+    }
+
+    /* Remove arrows in Chrome, Safari, Edge, Opera */
+    input[type="number"]::-webkit-inner-spin-button,
+    input[type="number"]::-webkit-outer-spin-button {
+        -webkit-appearance: none;
+        appearance: none;
+        margin: 0;
+    }
+
+    /* Remove arrows in Firefox */
+    input[type="number"] {
+        -moz-appearance: textfield;
+        appearance: textfield;
     }
 }
 
@@ -87,7 +105,7 @@
         @apply box-border aspect-auto object-cover border border-black flex-none w-auto py-4 px-10 no-underline relative overflow-hidden;
     }
     .btn-solid {
-        @apply cursor-pointer border border-black bg-black text-white hover:border-[#555] hover:bg-black hover:text-white font-medium text-sm tracking-wider py-4 px-10 transition-all duration-300 w-full;
+        @apply cursor-pointer border border-black bg-black text-white hover:border-gold hover:bg-gold hover:text-white font-medium tracking-wider py-4 px-10 transition-all duration-300 w-full;
     }
 
     .cart#cart-overlay {
@@ -171,6 +189,31 @@
          py-2 md:pr-8 md:pl-6 opacity-60 hover:opacity-100 hover:font-semibold;
     }
 
+    /* Thumbnail */
+    .thumbnail:not(.selected) {
+        @apply cursor-pointer;
+    }
+    .thumbnail.selected {
+        @apply border-4 border-primary;
+    }
+
+    .variant-btn {
+        @apply p-1 border-2 border-transparent rounded transition-colors cursor-pointer;
+    }
+
+    .variant-btn.active {
+        @apply border-primary bg-primary/10 cursor-default;
+    }
+
+    .quick-view-modal {
+        @apply fixed inset-0 z-50 hidden bg-black/50;
+    }
+
+    .quick-view-modal.is-visible {
+        @apply flex items-center justify-center;
+    }
+
+
     /* Promo banner */
     .promo-banner {
         @apply h-84 pl-2.5 pt-5 sm:pt-2 md:pt-0 flex-col sm:flex-row  gap-y-4 cursor-pointer bg-light-gray overflow-clip;
@@ -183,7 +226,7 @@
         @apply text-2xl md:text-5xl font-playfair-display;
     }
     .promo-subtitle {
-       @apply text-sm md:text-base opacity-80 my-2.5;
+        @apply text-sm md:text-base opacity-80 my-2.5;
     }
 
     .promo-image {
@@ -205,5 +248,28 @@
         font-size: 12px;
         white-space: nowrap;
     }
+}
 
+.animate-toast {
+    animation: toast 4s forwards;
+    /* Total duration: 4s (3s visible + 1s fade) */
+}
+
+@keyframes toast {
+    0% {
+        opacity: 0;
+    }
+
+    10% {
+        opacity: 1;
+    }
+
+    75% {
+        opacity: 1;
+    }
+
+    /* Visible for ~3s (adjust as needed) */
+    100% {
+        opacity: 0;
+    }
 }

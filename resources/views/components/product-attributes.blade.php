@@ -1,11 +1,12 @@
 @props(['variants'])
 
 @php
-  $attributes = collect($variants)->flatMap(fn($variant) => $variant['attributes'])->groupBy('attribute_name');
+  // $attributes = collect($variants)->flatMap(fn($variant) => $variant['attributes'])->groupBy('attribute_name');
 @endphp
 
 <div class="flex flex-col gap-4">
-  @foreach ($attributes as $attrName => $attrValues)
+  {{-- {{ json_encode($variants) }} --}}
+  {{-- @foreach ($attributes as $attrName => $attrValues)
     @php
       $uniqueValues = $attrValues->unique('attribute_value')->values();
       $isColor = $uniqueValues->every(fn($attr) =>
@@ -34,5 +35,5 @@
         <input type="hidden" id="{{ $slug }}" value="{{ $uniqueValues->first()->attribute_value ?? '' }}">
       </div>
     @endif
-  @endforeach
+  @endforeach --}}
 </div>

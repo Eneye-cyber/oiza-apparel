@@ -6,10 +6,7 @@ use Illuminate\Http\Request;
 
 use App\Models\Products\Product;
 use App\Services\CartService;
-use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\JsonResponse;
-use Illuminate\Support\Facades\Storage;
-use Illuminate\Support\Facades\Log;
 
 class CartController extends Controller
 {
@@ -32,13 +29,7 @@ class CartController extends Controller
         ]);
 
         // Transform cover_media for each item
-        $items = $cart->items->map(function ($item) {
-            $item->product->cover_media = $item->product->cover_media
-                ? Storage::disk(env('APP_DISK', 'local'))->url($item->product->cover_media)
-                : null;
-            // Log::info(['controller' => 'CartController', 'method' => 'index', 'data' => $item]);
-            return $item;
-        });
+        $items = $cart->items;
 
         return response()->json([
             'items' => $items,

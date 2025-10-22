@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Products\Product;
 use App\Models\Shipping\ShippingCountry;
 use App\Models\Shipping\ShippingState;
 use Illuminate\Http\Request;
@@ -66,5 +67,20 @@ class ApiController extends Controller
     }
 
     return response()->json([]);
+  }
+
+  public function productQuickView(string $id)
+  {
+    // Fetch product details for quick view
+    Log::info("Fetching product for quick view: ", [$id]);
+    $product = Product::with([ 'variants', 'category:id,name'])
+      ->where('id', $id)
+      ->first();
+
+    if (!$product) {
+      return response()->json(['error' => 'Product not found'], 404);
+    }
+
+    return response()->json($product);
   }
 }

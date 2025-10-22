@@ -41,31 +41,31 @@
                     @if (!empty($category['subcategories']))
                         <div
                             class="absolute min-w-full w-screen left-0 bg-white shadow-lg py-6 opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-200 z-50">
-                            <div class="container grid grid-cols-12 max-h-80 gap-6">
-                              <div class="col-span-3 w-full max-h-72 grid grid-cols-2 grid-rows-2 gap-4 relative">
+                            <div class="container grid grid-cols-12 h-fit gap-6">
+                              <div class="col-span-3 w-full max-h-72 grid lg:grid-cols-2 grid-rows-2 gap-4 relative">
                                 <div class="object-contain overflow-clip">
                                   <img src="{{ $category['image'] ?? asset('img/african_print.webp') }}" loading="lazy" alt="{{ $category['name'] }}"
                                       class="h-full w-full object-cover rounded-lg ">
                                 </div>
                                 
-                                <div class="object-contain overflow-clip">
+                                <div class="hidden lg:block object-contain overflow-clip">
                                   <img src="{{ $category['image'] ?? asset('img/kid_ai.jpg') }}" loading="lazy" alt="{{ $category['name'] }}"
                                       class="h-full w-full object-cover rounded-lg ">
                                 </div>
 
 
-                                <div class="object-contain overflow-clip">
+                                <div class="hidden lg:block object-contain overflow-clip">
                                   <img src="{{ $category['image'] ?? asset('img/shirt.jpg') }}" loading="lazy" alt="{{ $category['name'] }}"
                                       class="h-full w-full object-cover rounded-lg ">
                                 </div>
 
                                 <div class="object-contain overflow-clip">
-                                  <img src="{{ $category['image'] ?? 'https://i.pinimg.com/736x/00/d0/df/00d0df8c402029ef699cb334cb5e97ef.jpg' }}" loading="lazy" alt="{{ $category['name'] }}"
+                                  <img src="{{ $category['image'] ?? asset('img/fabrics.jpg') }}" loading="lazy" alt="{{ $category['name'] }}"
                                       class="h-full w-full object-cover rounded-lg ">
                                 </div>
                               </div>
 
-                              <ul class="col-span-9 grid grid-cols-5 max-h-72 border-l pl-6">
+                              <ul class="col-span-9 grid grid-cols-5 h-fit border-l pl-6">
                                 @include('components.submenu', [
                                     'subcategories' => $category['subcategories'],
                                     'parentSlug' => $category['slug'],
@@ -83,7 +83,7 @@
         <nav class="md:hidden hidden flex-col space-y-2 mt-4 bg-white p-4 shadow-lg absolute w-full left-0 top-12 z-50"
             id="mobile-nav" aria-label="Mobile navigation">
             <a href="{{ Route::has('shop') ? route('shop') : '#' }}"
-                class="p-3 block hover:text-[#555] transition-colors duration-200">New Arrivals</a>
+                class="p-3 block hover:text-[#555] transition-colors duration-200">Shop</a>
             @foreach ($categories as $category)
                 <div class="relative" aria-haspopup="true" aria-expanded="false">
                     <button
