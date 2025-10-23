@@ -185,8 +185,9 @@ class PageController extends Controller
 
             $tags_string = implode(', ', $product['tags']);
 
+            $similarProducts = $product->getRelatedProducts(4);
 
-            return view('pages.shop.product', compact('product', 'category', 'tags_string', 'breadcrumbs'));
+            return view('pages.shop.product', compact('product', 'category', 'tags_string', 'breadcrumbs', 'similarProducts'));
         } catch (\Throwable $th) {
             Log::error('Error fetching product details', [
                 'controller' => 'PageController',

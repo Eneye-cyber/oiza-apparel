@@ -8,6 +8,9 @@
 @section('og_image', $category->image ? asset('storage/' . $category->image) :
     asset('/favicon/android-chrome-192x192.png'))
 
+@section('modal')
+  <x-modals.quick-view />
+@endsection
 
 @section('content')
     <article class="pb-12">

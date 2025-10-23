@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\ApiController;
 use App\Http\Controllers\CheckoutController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
@@ -10,3 +11,6 @@ Route::get('/user', function (Request $request) {
 
 Route::post('/payment/webhook/monnify', [CheckoutController::class, 'monnifyWebhook'])
     ->name('payment.webhook.monnify');
+
+Route::get('/products/{id}/quick-view', [ApiController::class, 'productQuickView'])
+    ->name('product.quick-view');

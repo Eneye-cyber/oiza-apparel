@@ -6,6 +6,7 @@ use App\Models\Attribute;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Support\Facades\Storage;
 
 class ProductVariant extends Model
 {
@@ -24,6 +25,14 @@ class ProductVariant extends Model
         'stock_quantity',
     ];
 
+    protected $appends = ['media_url'];
+    // defines a computed attribute
+    public function getMediaUrlAttribute()
+    {
+        return $this->media
+            ? Storage::disk(env('APP_DISK', 'local'))->url($this->media)
+            : null;
+    }
 
 
     public function product(): BelongsTo
