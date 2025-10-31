@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Http\Requests\StoreOrderRequest;
+use App\Models\CartTemporaryItem;
 use Illuminate\Http\Request;
 use App\Services\CartService;
 use App\Services\OrderService;
@@ -13,6 +14,7 @@ use Illuminate\Support\MessageBag;
 class CheckoutController extends Controller
 {
     //
+    
     protected CartService $cartService;
     protected OrderService $orderService;
 
@@ -26,7 +28,7 @@ class CheckoutController extends Controller
     {
         $cart = $this->cartService->getCart()->load([
             'items.product' => function ($query) {
-                $query->select('id', 'cover_media', 'name', 'category_id', 'main_color');
+                $query->select('id', 'cover_media', 'name', 'category_id', 'main_color', 'price', 'discount_price');
             },
             'items.product.category' => function ($query) {
                 $query->select('id', 'name');
@@ -42,7 +44,32 @@ class CheckoutController extends Controller
 
         return view('pages.checkout', compact('cartItems', 'subtotal'));
     }
+ 
+    public function quickBuy(string $id)
+    {
+        $item = CartTemporaryItem::with(['product', 'variant'])->find($id);
+        if (!$item) {
+            Log::warning('Quick Buy item not found', ['item_id' => $id]);
+            return redirect()->route('shop')->with('error', 'The requested item for Quick Buy was not found.');
+        }
+        
+        if (!$item->product) {
+            Log::warning('Product for Quick Buy item not found', ['item_id' => $id]);
+            return redirect()->route('shop')->with('error', 'The product for the requested Quick Buy item was not found.');
+        }
 
+        // if item is 24hrs old, delete and redirect to shop
+        $createdAt = $item->created_at;
+        if ($createdAt->diffInHours(now()) > 24) {
+            Log::info('Quick Buy item expired', ['item_id' => $id, 'created_at' => $createdAt]);
+            $item->delete();
+            return redirect()->route('shop')->with('error', 'The Quick Buy item has expired. Please try again.');
+        }
+
+        $subtotal = $item->product->getCurrentCost() * $item->quantity;
+        return view('pages.checkout.checkout-quick-buy', compact('item', 'subtotal'));
+
+    }
 
     public function store(StoreOrderRequest $request, PaymentService $paymentService)
     {

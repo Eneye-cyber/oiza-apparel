@@ -47,6 +47,7 @@ Route::post('/contact', [ContactController::class, 'submit'])->name('contact.sub
 
 // Checkout Route
 Route::get('/checkout', [CheckoutController::class, 'index'])->name('checkout');
+Route::get('/checkout/quick-buy/{id}', [CheckoutController::class, 'quickBuy'])->name('checkout.quick-buy');
 Route::post('/checkout', [CheckoutController::class, 'store'])->name('checkout.store');
 
 Route::get('/order', [PageController::class, 'order'])->name('order');

@@ -54,8 +54,8 @@
           <!-- Default (base) image button -->
           <button
             type="button"
-            class="variant-btn active"
-            data-variant-id=""
+            class="variant-btn"
+            data-variant-id="0"
             data-image-src="{{ $imageSrc }}">
             <img src="{{ $imageSrc }}" alt="{{ $imageAlt }}" class="w-8 h-8 object-cover">
           </button>

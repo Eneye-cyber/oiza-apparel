@@ -1,5 +1,5 @@
 <div id="p-quick-view-modal" class="quick-view-modal" role="dialog" aria-labelledby="product-modal-title" aria-modal="true">
-  <div class="relative w-full max-w-3xl max-h-[90vh] mx-4 bg-white rounded-lg shadow-2xl overflow-hidden">
+  <div class="relative w-full max-w-3xl max-h-full md:max-h-[420px] mx-4 bg-white rounded-md sm:rounded-lg shadow-2xl overflow-hidden">
     <!-- Close Button -->
     <button type="button"
       class="absolute top-4 right-4 z-10 bg-white/80 backdrop-blur-sm hover:bg-white rounded-full p-2"
@@ -10,7 +10,7 @@
     </button>
 
     <!-- Modal Content -->
-    <div id="modal-content" class="h-full max-h-[90vh] relative overflow-hidden">
+    <div id="modal-content" class="h-full relative overflow-hidden">
 
  
     </div>

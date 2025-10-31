@@ -7,15 +7,22 @@ use App\Models\Shipping\ShippingCountry;
 use App\Models\Shipping\ShippingState;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Log;
+use App\Traits\ApiResponseTrait;
+use App\Http\Requests\StoreQuickBuyRequest;
+use App\Models\CartTemporaryItem;
+use Illuminate\Http\JsonResponse;
+use Exception;
 
 class ApiController extends Controller
 {
+  use ApiResponseTrait;
+
   public function countries($code = null)
   {
     if ($code) {
       // Fetch specific country with states and methods
       $country = ShippingCountry::where('code', '=', $code)
-  
+
         ->with([
           'states:name,id,is_active,country_id',
           'methods' => function ($query) {
@@ -73,7 +80,7 @@ class ApiController extends Controller
   {
     // Fetch product details for quick view
     Log::info("Fetching product for quick view: ", [$id]);
-    $product = Product::with([ 'variants', 'category:id,name'])
+    $product = Product::with(['variants', 'category:id,name'])
       ->where('id', $id)
       ->first();
 
@@ -82,5 +89,46 @@ class ApiController extends Controller
     }
 
     return response()->json($product);
+  }
+
+
+
+  public function storeQuickBuy(StoreQuickBuyRequest $request): JsonResponse
+  {
+    Log::info('Quick Buy request received');
+    $validated = $request->validated();
+
+    try {
+      $productId = $validated['product_id'];
+      $variantId = $validated['variant_id'] ?? null;
+      $quantity  = (int) $validated['quantity'];
+
+      $tempCartItem = CartTemporaryItem::create([
+        'product_id' => $productId,
+        'variant_id' => $variantId,
+        'quantity'   => $quantity,
+      ]);
+
+      $redirectUrl = route('checkout.quick-buy', ['id' => $tempCartItem->id]);
+
+      Log::info('Quick Buy successful', [
+        'temp_cart_item_id' => $tempCartItem->id,
+        'redirect_url'      => $redirectUrl,
+      ]);
+
+      return $this->successResponse([
+        'redirect_url' => $redirectUrl,
+      ], 'Quick Buy created successfully.');
+    } catch (Exception $e) {
+      Log::error('Quick Buy error occurred', [
+        'message' => $e->getMessage(),
+        'trace'   => $e->getTraceAsString(),
+      ]);
+
+      return $this->errorResponse(
+        'An unexpected error occurred while processing your request.',
+        500
+      );
+    }
   }
 }

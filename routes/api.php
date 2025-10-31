@@ -14,3 +14,5 @@ Route::post('/payment/webhook/monnify', [CheckoutController::class, 'monnifyWebh
 
 Route::get('/products/{id}/quick-view', [ApiController::class, 'productQuickView'])
     ->name('product.quick-view');
+
+Route::post('/quick-buy', [ApiController::class, 'storeQuickBuy'])->name('checkout.quick')->middleware(['throttle:api']);
