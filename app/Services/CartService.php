@@ -21,33 +21,36 @@ class CartService
             $sessionId = (string) Str::uuid();
             session(['cart_session_id' => $sessionId]);
         }
-            Log::info(['sessionId' => $sessionId]);
+        Log::info(['sessionId' => $sessionId]);
 
         return Cart::with('items')->firstOrCreate(['session_id' => $sessionId]);
     }
 
-    public function addItem($product, int $quantity = 1): void
+    public function addItem($product, int $quantity = 1, ?int $variant_id = null): void
     {
         $cart = $this->getCart();
 
-        $item = $cart->items()->where('product_id', $product->id)->first();
+        $item = $cart->items()->where('product_id', $product->id)
+            ->where('variant_id', $variant_id)
+            ->first();
 
         if ($item) {
             $item->increment('quantity', $quantity);
         } else {
             $cart->items()->create([
                 'product_id' => $product->id,
+                'variant_id' => $variant_id,
                 'quantity' => $quantity,
-                'price' => $product->price, // snapshot price
+                'price' => $product->discount_price ?? $product->price
             ]);
         }
         $cart->touch();
     }
 
-    public function removeItem(int $itemId): void
+    public function removeItem(int $itemId, ?int $variant_id = null): void
     {
         $cart = $this->getCart();
-        $cart->items()->where('id', $itemId)->delete();
+        $cart->items()->where('id', $itemId)->where('variant_id', $variant_id)->delete();
         $cart->touch();
     }
 
@@ -69,7 +72,7 @@ class CartService
         $userCart = Cart::firstOrCreate(['user_id' => $user->id]);
 
         foreach ($guestCart->items as $item) {
-            $existing = $userCart->items()->where('product_id', $item->product_id)->first();
+            $existing = $userCart->items()->where('product_id', $item->product_id)->where('variant_id', $item->variant_id)->first();
             if ($existing) {
                 $existing->increment('quantity', $item->quantity);
             } else {

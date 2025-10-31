@@ -28,7 +28,7 @@
             id="main-nav">
             <a href="{{ Route::has('shop') ? route('shop') : '#' }}"
                 class="p-5 inline-block hover:text-[#555] transition-colors duration-200"
-                 data-aos="fade-down" data-aos-delay="100">New Arrivals</a>
+                 data-aos="fade-down" data-aos-delay="100">Shop</a>
             @foreach ($categories as $category)
                 <div class="group" aria-haspopup="true" aria-expanded="false">
                     <div class="p-5 cursor-pointer flex items-center gap-1.5 hover:text-[#555] transition-colors duration-200"

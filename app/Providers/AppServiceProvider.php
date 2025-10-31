@@ -6,6 +6,9 @@ use App\Models\Category;
 use App\Observers\CategoryObserver;
 use App\Services\CategoryService;
 use Illuminate\Support\ServiceProvider;
+use Illuminate\Cache\RateLimiting\Limit;
+use Illuminate\Http\Request;
+use Illuminate\Support\Facades\RateLimiter;
 
 class AppServiceProvider extends ServiceProvider
 {
@@ -14,6 +17,7 @@ class AppServiceProvider extends ServiceProvider
      */
     public function register(): void
     {
+
         // Register the CategoryService so it can be injected into other classes.
         // This ensures that the same instance is used throughout the application.
         // This is useful for services that do not maintain state or configuration.
@@ -36,6 +40,9 @@ class AppServiceProvider extends ServiceProvider
     public function boot(): void
     {
         //
+        RateLimiter::for('api', function (Request $request) {
+            return Limit::perMinute(60)->by($request->user()?->id ?: $request->ip());
+        });
         Category::observe(CategoryObserver::class);
     }
 }

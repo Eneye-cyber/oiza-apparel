@@ -11,7 +11,7 @@
 @section('content')
 <article class="py-10">
   <div class="container">
-    <section class="flex flex-col flex-between">
+    <section class="product-page flex flex-col flex-between">
       <div class="flex items-start w-full">
         <!-- Main Content -->
         <div class="w-full !bg-scroll">
@@ -27,7 +27,7 @@
                        src="{{ $product->cover_media_url }}"
                        loading="eager"
                        alt="{{ $product['name'] }}"
-                       class="object-cover w-full h-auto transition-all duration-300">
+                       class="object-contain w-full h-auto transition-all duration-300">
                 </div>
 
                 <!-- Thumbnails -->
@@ -81,35 +81,40 @@
               <!-- Description -->
               <div class="opacity-80">{!! \Filament\Forms\Components\RichEditor\RichContentRenderer::make($product['description'])->toHtml() !!}</div>
 
-              <!-- Attributes -->
-              <x-product-variants :variants="$product->variants" :baseImage="$product->cover_media_url" :baseName="$product['name']" :baseId="$product->id" />
-              {{-- <x-product-attributes :variants="$product" /> --}}
-
-              <div class="separator my-4"></div>
-
-              <!-- Quantity & Add to Cart -->
-              <div class="flex flex-between gap-4">
-                <label for="quantity" class="text-lg font-semibold mb-1.5">Quantity</label>
-                <div class="flex items-center border border-slate-200 rounded">
-                  <button type="button" class="qty-btn px-3 py-2 text-sm" data-change="-1">-</button>
-                  <input type="number" id="quantity" value="1" min="1" max="{{ $product->max_quantity }}"
-                         class="w-16 text-center border-x border-slate-200 py-2 text-sm !appearance-none">
-                  <button type="button" class="qty-btn px-3 py-2 text-sm" data-change="1">+</button>
+              <form id="product-page-form" class="flex flex-col gap-4" action="#" method="POST">
+                <input type="hidden" name="product_id" required value="{{ $product->id }}" />
+                <!-- Attributes -->
+                <x-product-variants :variants="$product->variants" :baseImage="$product->cover_media_url" :baseName="$product['name']" :baseId="$product->id" />
+                <x-product-attributes :variants="$product" />
+  
+                <div class="separator my-4"></div>
+  
+                <!-- Quantity  -->
+                <div class="flex flex-between gap-4">
+                  <label for="quantity" class="text-lg font-semibold mb-1.5">Quantity</label>
+                  <div class="flex items-center border border-slate-200 rounded">
+                    <button type="button" class="qty-btn px-3 py-2 text-sm" data-change="-1">-</button>
+                    <input type="number" name="quantity" id="quantity" value="1" min="1" required max="{{ $product->max_quantity }}"
+                           class="w-16 text-center border-x border-slate-200 py-2 text-sm !appearance-none">
+                    <button type="button" class="qty-btn px-3 py-2 text-sm" data-change="1">+</button>
+                  </div>
                 </div>
-              </div>
+  
+                <!-- Add to Cart & Buy Now Buttons -->
+                <button type="submit" name="add_to_cart" class="btn w-full tracking-widest uppercase relative group hover:border-primary cursor-pointer"
+                        data-product-id="{{ $product->id }}">
+                  <span class="transition-all duration-300 z-10 group-hover:text-white relative">Add to Cart</span>
+                  <div type="submit" name="add_to_cart" data-product-id="{{ $product->id }}"
+                      class="transition-all duration-300 z-0 bg-primary rounded-full w-full aspect-square absolute top-full left-0 group-hover:scale-110 group-hover:-translate-y-1/2  transform-style-3d">
+                  </div>
+                </button>
+  
+                <button name="buy_now" class="btn-solid tracking-widest uppercase buy-now"
+                        data-product-id="{{ $product->id }}">
+                  Buy it Now
+                </button>
 
-              <button class="btn tracking-widest uppercase add-to-cart relative group hover:border-primary cursor-pointer"
-                      data-product-id="{{ $product->id }}">
-                <span class="transition-all duration-300 z-10 group-hover:text-white relative">Add to Cart</span>
-                <div data-product-id="{{ $product->id }}"
-                    class="transition-all duration-300 z-0 bg-primary rounded-full w-full aspect-square absolute top-full left-0 group-hover:scale-110 group-hover:-translate-y-1/2  transform-style-3d">
-                </div>
-              </button>
-
-              <button class="btn-solid tracking-widest uppercase buy-now"
-                      data-product-id="{{ $product->id }}">
-                Buy it Now
-              </button>
+              </form>
 
               <!-- Category & Tags -->
               <div class="py-6 space-y-4">
@@ -153,9 +158,10 @@
 @section('scripts')
 <script>
   window.ProductPage = {
-    variants: @json($product->variants),
+    // variants: @json($product->variants),
+    // attr: @json($product->attributes),
     maxQuantity: {{ $product->max_quantity }},
-    productName: @json($product->name),
+    // productName: @json($product->name),
   };
 </script>
 @vite('resources/js/product.js')

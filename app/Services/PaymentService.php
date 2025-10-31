@@ -57,7 +57,7 @@ class PaymentService
             // Let OrderService handle domain logic
             app(OrderService::class)->completeCheckout($order);
         } else {
-            $order->update(['payment_status' => PaymentStatus::Failed]);
+            $this->handleFailed($order, $paymentReference);
         }
 
         return $order->refresh();
@@ -117,7 +117,7 @@ class PaymentService
 
     protected function handleFailed(Order $order, string $orderRef): void
     {
-        $order->update(['payment_status' => PaymentStatus::Failed]);
+        $order->update(['payment_status' => PaymentStatus::Failed, 'status' => OrderStatus::Cancelled]);
 
         Log::warning('Monnify webhook: Payment failed', [
             'order_reference' => $orderRef,

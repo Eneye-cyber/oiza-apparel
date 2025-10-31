@@ -161,7 +161,7 @@ class PageController extends Controller
             }
 
             // Eager load the variants and their attributes
-            $product->load('variants.attributes');
+            $product->load(['attributes','variants.attributes']);
             Log::info('Loaded product with variants and attributes', [
                 'controller' => 'PageController',
                 'method' => 'product',

@@ -109,6 +109,7 @@ class OrderService
       //  Update order status
       if ($order->payment_status !== PaymentStatus::Success->value) {
         $order->payment_status = PaymentStatus::Success->value;
+        $order->status = OrderStatus::Processing->value;
       }
 
       if (is_null($order->confirmed_at)) {

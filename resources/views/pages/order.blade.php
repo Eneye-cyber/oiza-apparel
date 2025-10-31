@@ -70,6 +70,7 @@
                 name="paymentReference"
                 class="mt-2 w-full border border-black rounded-md py-3 px-4 text-black focus:outline-none focus:border-[#555]"
                 placeholder="Enter your Order ID"
+                value="{{ old('paymentReference', '') }}"
                 required
                 aria-describedby="order-error">
               @error('paymentReference')
