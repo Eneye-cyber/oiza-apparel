@@ -21,10 +21,13 @@ class CartController extends Controller
     {
         $cart = $this->cartService->getCart()->load([
             'items.product' => function ($query) {
-                $query->select('id', 'cover_media', 'name', 'category_id', 'main_color');
+                $query->select('id', 'cover_media', 'name', 'category_id', 'main_color', 'discount_price', 'price');
             },
             'items.product.category' => function ($query) {
                 $query->select('id', 'name');
+            },
+            'items.variant' => function ($query) {
+                $query->select('id', 'name', 'media', 'price');
             },
         ]);
 
@@ -33,16 +36,18 @@ class CartController extends Controller
 
         return response()->json([
             'items' => $items,
-            'subtotal' => $items->sum(fn($i) => $i->price * $i->quantity),
+            'subtotal' => $items->sum(fn($i) => ($i->variant?->price ?? $i->product?->discount_price ?? $i->product->price) * $i->quantity),
             'count' => $items->count()
         ]);
     }
 
     public function add(Request $request, $productId): JsonResponse
     {
-        $qty = $request->input('quantity', 1);
+        $quantity = $request->input('quantity', 1);
+        $variant_id = $request->input('variant_id', null);
+
         $product = Product::findOrFail($productId);
-        $this->cartService->addItem($product, $qty);
+        $this->cartService->addItem($product, $quantity, $variant_id);
 
         return $this->index();
     }

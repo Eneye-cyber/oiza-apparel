@@ -408,13 +408,12 @@
     }
   </style>
 
-  <script src="{{ asset('js/main.js') }}"></script>
-
   <script src="{{ asset('js/aos.js') }}"></script>
   <script>
     AOS.init();
   </script>
   @yield('scripts')
+  @vite(['resources/js/main.js'])
 </body>
 
 </html>

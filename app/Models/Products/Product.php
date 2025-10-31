@@ -72,6 +72,11 @@ class Product extends Model
             : null;
     }
 
+    public function getCurrentCost(): float
+    {
+        return $this->discount_price ?? $this->price;
+    }
+
     public function category(): BelongsTo
     {
         return $this->belongsTo(Category::class);
