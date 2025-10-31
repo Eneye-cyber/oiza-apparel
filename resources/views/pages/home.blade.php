@@ -13,9 +13,9 @@
       <div class="grid md:grid-cols-2 gap-6">
         <div class="flex flex-col justify-center items-start gap-5 text-left">
           <h1
-            class=" text-6xl md:text-[90px] lg:text-[120px] leading-[0.9] text-primary drop-shadow-sm drop-shadow-primary/20 font-playfair-display mt-5 mb-2.5"
+            class=" text-6xl md:text-[5.625rem] lg:text-[6.5rem] leading-[0.9] text-primary drop-shadow-sm drop-shadow-primary/20 font-playfair-display mt-5 mb-2.5"
             data-aos="zoom-in" data-aos-delay="150">Oiza Apparels</h1>
-          <div data-aos="fade-up" data-aos-delay="200" class="space-y-5">
+          <div data-aos="fade-up" data-aos-delay="200" data-aos-anchor-placement="top-bottom" class="space-y-5">
             <p class="text-[#222] text-base">Choose from a collection of high quality fabrics that suit your
               style</p>
             <a href="{{ Route::has('shop') ? route('shop') : '/not-found' }}"
