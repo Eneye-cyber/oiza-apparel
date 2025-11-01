@@ -16,6 +16,7 @@
     --acme-blue: #6cb3b5;
     --acme-background: oklch(0.98 0.002 85);
     --acme-muted-foreground: oklch(0.5 0 0);
+    --acme-destructive: hsl(0 72.22% 50.59%);
 }
 
 @theme {
@@ -32,6 +33,7 @@
     --color-whitesmoke: var(--acme-whitesmoke);
     --color-background: var(--acme-background);
     --color-muted-foreground: var(--acme-muted-foreground);
+    --color-destructive: var(--acme-destructive);
 }
 
 @layer base {

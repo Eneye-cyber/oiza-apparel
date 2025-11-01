@@ -245,7 +245,7 @@
                 {{ $item->question }}
               </summary>
               <div class="p-4 text-black opacity-80 border-t border-white">
-                {{ $item->answer }}
+              {!! \Filament\Forms\Components\RichEditor\RichContentRenderer::make($item->answer)->toHtml() !!}
               </div>
             </details>
           @empty
