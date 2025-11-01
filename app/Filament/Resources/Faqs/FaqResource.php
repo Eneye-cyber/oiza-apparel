@@ -30,7 +30,7 @@ class FaqResource extends Resource
 
   protected static string|BackedEnum|null $navigationIcon = Heroicon::OutlinedRectangleStack;
 
-  protected static string|UnitEnum|null $navigationGroup = "Support";
+  protected static string|UnitEnum|null $navigationGroup = "Customer management";
 
   public static function form(Schema $schema): Schema
   {
