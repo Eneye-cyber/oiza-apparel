@@ -59,7 +59,7 @@ class FaqResource extends Resource
             IconColumn::make('is_active')
               ->boolean()->grow(false),
           ]),
-          TextColumn::make('answer')->label('Answers'),
+          TextColumn::make('answer')->label('Answers')->html(),
         ])->space(2),
       ])
       ->contentGrid([
