@@ -115,4 +115,16 @@ return [
         'name' => env('MAIL_FROM_NAME', 'Example'),
     ],
 
+    /*
+    |--------------------------------------------------------------------------
+    | Global Admin Email Address
+    |--------------------------------------------------------------------------
+    |
+    | This is used to specify the emails for notifying the website owner
+    | of activities on the website
+    |
+    */
+
+    'admin_email' => env('ADMIN_EMAIL', 'abrahamalao94@gmail.com'),
+
 ];
