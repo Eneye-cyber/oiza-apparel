@@ -2,6 +2,10 @@
 
 @section('title', 'Shop')
 
+@section('modal')
+  <x-modals.quick-view />
+@endsection
+
 @section('content')
     <article class="pb-12">
         <div class="bg-gold py-5">

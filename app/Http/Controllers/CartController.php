@@ -6,10 +6,7 @@ use Illuminate\Http\Request;
 
 use App\Models\Products\Product;
 use App\Services\CartService;
-use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\JsonResponse;
-use Illuminate\Support\Facades\Storage;
-use Illuminate\Support\Facades\Log;
 
 class CartController extends Controller
 {
@@ -24,34 +21,33 @@ class CartController extends Controller
     {
         $cart = $this->cartService->getCart()->load([
             'items.product' => function ($query) {
-                $query->select('id', 'cover_media', 'name', 'category_id', 'main_color');
+                $query->select('id', 'cover_media', 'name', 'category_id', 'main_color', 'discount_price', 'price');
             },
             'items.product.category' => function ($query) {
                 $query->select('id', 'name');
             },
+            'items.variant' => function ($query) {
+                $query->select('id', 'name', 'media', 'price');
+            },
         ]);
 
         // Transform cover_media for each item
-        $items = $cart->items->map(function ($item) {
-            $item->product->cover_media = $item->product->cover_media
-                ? Storage::disk(env('APP_DISK', 'local'))->url($item->product->cover_media)
-                : null;
-            // Log::info(['controller' => 'CartController', 'method' => 'index', 'data' => $item]);
-            return $item;
-        });
+        $items = $cart->items;
 
         return response()->json([
             'items' => $items,
-            'subtotal' => $items->sum(fn($i) => $i->price * $i->quantity),
+            'subtotal' => $items->sum(fn($i) => ($i->variant?->price ?? $i->product?->discount_price ?? $i->product->price) * $i->quantity),
             'count' => $items->count()
         ]);
     }
 
     public function add(Request $request, $productId): JsonResponse
     {
-        $qty = $request->input('quantity', 1);
+        $quantity = $request->input('quantity', 1);
+        $variant_id = $request->input('variant_id', null);
+
         $product = Product::findOrFail($productId);
-        $this->cartService->addItem($product, $qty);
+        $this->cartService->addItem($product, $quantity, $variant_id);
 
         return $this->index();
     }

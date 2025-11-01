@@ -11,6 +11,9 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Support\Facades\Storage;
+use Illuminate\Database\Eloquent\Relations\BelongsToMany;
+use Illuminate\Support\Facades\Cache;
+use Illuminate\Support\Collection;
 
 class Product extends Model
 {
@@ -41,7 +44,7 @@ class Product extends Model
     //     'rating',
     // ];
     protected $guarded = [];
-    
+
     protected $casts = [
         'media' => 'array',
         'tags' => 'array',
@@ -69,8 +72,10 @@ class Product extends Model
             : null;
     }
 
-    
-
+    public function getCurrentCost(): float
+    {
+        return $this->discount_price ?? $this->price;
+    }
 
     public function category(): BelongsTo
     {
@@ -120,7 +125,7 @@ class Product extends Model
                     ->where('order_type', OrderType::Unavailable);
             });
     }
-    
+
     public function getIsActuallyInactiveAttribute(): bool
     {
         if (! $this->is_active) {
@@ -141,5 +146,61 @@ class Product extends Model
     public function getIsActuallyActiveAttribute(): bool
     {
         return ! $this->is_actually_inactive;
+    }
+
+    /**
+     * Self-referential many-to-many for related products.
+     * Excludes self by default in queries.
+     */
+    public function relatedProducts(): BelongsToMany
+    {
+        return $this->belongsToMany(Product::class, 'product_related', 'product_id', 'related_id')
+            ->where('related_id', '!=', $this->id); // Exclude self
+    }
+
+    /**
+     * Get related products: Prioritize manual, fallback to tag-based similarity.
+     * Cached for 1 hour (3600 seconds) to reduce DB load.
+     *
+     * @param int $limit
+     * @return Collection
+     */
+    public function getRelatedProducts(int $limit = 4): Collection
+    {
+        $cacheKey = "related_products_{$this->id}_{$limit}";
+
+        return Cache::remember($cacheKey, 3600, function () use ($limit) {
+            // Get manual related products
+            $manualRelated = $this->relatedProducts()->take($limit)->get();
+
+            if ($manualRelated->count() > 0) {
+                return $manualRelated;
+            }
+
+            // Fallback: Get the product's tag IDs (eager-load to avoid N+1)
+
+            $originalTags = $this->tags ?? [];
+
+            if (empty($originalTags)) {
+                return collect();
+            }
+
+            // Query for similar products: Share at least one tag, ordered by shared count
+            $candidates = Product::where('id', '!=', $this->id)
+                ->where(function ($query) use ($originalTags) {
+                    foreach ($originalTags as $tag) {
+                        $query->orWhereJsonContains('tags', $tag);
+                    }
+                })
+                ->limit(20) // Fetch more candidates than needed for better sorting options
+                ->get();
+
+            // Compute shared count in PHP and sort (portable and efficient for small datasets)
+            $similarProducts = $candidates->sortByDesc(function ($candidate) use ($originalTags) {
+                $candidateTags = $candidate->tags ?? [];
+                return count(array_intersect($candidateTags, $originalTags));
+            })->take(4); // Limit to top 4 by shared count
+            return $similarProducts;
+        });
     }
 }

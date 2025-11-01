@@ -1,6 +1,6 @@
 <div id="{{ $id }}"
   class="fixed top-4 right-4 p-4 rounded-lg shadow-lg text-white max-w-sm z-50 
-            {{ $type === 'success' ? 'bg-green-500' : 'bg-destructive' }} 
+            {{ $type === 'success' ? 'bg-primary' : 'bg-destructive' }} 
             animate-toast">
   <div class="flex items-center">
     <span class="text-xs font-semibold">{{ $message }}</span>

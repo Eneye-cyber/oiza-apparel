@@ -12,13 +12,13 @@ use App\Models\Orders\Order;
 use App\Models\Products\Product;
 use Illuminate\Http\Request;
 
-Route::get('/products/{slug}/quick-view', function ($slug, Request $request) {
-    $product = Product::where('slug', $slug)
-        ->with(['variants.attributes'])
-        ->firstOrFail();
+// Route::get('/products/{slug}/quick-view', function ($slug, Request $request) {
+//     $product = Product::where('slug', $slug)
+//         ->with(['variants.attributes'])
+//         ->firstOrFail();
 
-    return response()->json($product);
-});
+//     return response()->json($product);
+// });
 
 
 Route::prefix('cart')->group(function () {
@@ -43,10 +43,11 @@ Route::get('product/{product:slug}', [PageController::class, 'product'])->name('
     
 // Contact Route
 Route::get('/contact', [ContactController::class, 'index'])->name('contact');
-Route::post('/contact', [ContactController::class, 'submit'])->name('contact.submit');
+Route::post('/contact', [ContactController::class, 'store'])->name('contact.submit');
 
 // Checkout Route
 Route::get('/checkout', [CheckoutController::class, 'index'])->name('checkout');
+Route::get('/checkout/quick-buy/{id}', [CheckoutController::class, 'quickBuy'])->name('checkout.quick-buy');
 Route::post('/checkout', [CheckoutController::class, 'store'])->name('checkout.store');
 
 Route::get('/order', [PageController::class, 'order'])->name('order');

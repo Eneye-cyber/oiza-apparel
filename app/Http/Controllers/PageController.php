@@ -161,7 +161,7 @@ class PageController extends Controller
             }
 
             // Eager load the variants and their attributes
-            $product->load('variants.attributes');
+            $product->load(['attributes','variants.attributes']);
             Log::info('Loaded product with variants and attributes', [
                 'controller' => 'PageController',
                 'method' => 'product',
@@ -185,8 +185,9 @@ class PageController extends Controller
 
             $tags_string = implode(', ', $product['tags']);
 
+            $similarProducts = $product->getRelatedProducts(4);
 
-            return view('pages.shop.product', compact('product', 'category', 'tags_string', 'breadcrumbs'));
+            return view('pages.shop.product', compact('product', 'category', 'tags_string', 'breadcrumbs', 'similarProducts'));
         } catch (\Throwable $th) {
             Log::error('Error fetching product details', [
                 'controller' => 'PageController',

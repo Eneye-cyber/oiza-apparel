@@ -6,69 +6,52 @@ use App\Models\Cart;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Str;
 use Illuminate\Support\Facades\Log;
-use Illuminate\Database\QueryException;
-use Throwable;
+
 
 class CartService
 {
     public function getCart(): ?Cart
     {
-        try {
-            // Attempt to get or create a session ID
-            $sessionId = session()->get('cart_session_id');
+        // if (Auth::check()) {
+        //     return Cart::firstOrCreate(['user_id' => Auth::id()]);
+        // }
 
-            if (!$sessionId) {
-                Log::info('Cart session not found, generating new session ID.');
-                $sessionId = (string) Str::uuid();
-                session(['cart_session_id' => $sessionId]);
-            }
-
-            Log::info(['cart_session_id' => $sessionId]);
-
-            // Try to find or create the cart for this session
-            $cart = Cart::with('items')->firstOrCreate(['session_id' => $sessionId]);
-
-            return $cart;
-        } catch (QueryException $e) {
-            // Handles database-related issues
-            Log::error('Database error while fetching/creating cart.', [
-                'error' => $e->getMessage(),
-                'session_id' => $sessionId ?? null,
-            ]);
-        } catch (Throwable $e) {
-            // Handles all other unexpected errors
-            Log::error('Unexpected error in getCart()', [
-                'error' => $e->getMessage(),
-                'session_id' => $sessionId ?? null,
-            ]);
+        $sessionId = session()->get('cart_session_id');
+        if (!$sessionId) {
+            Log::info('No sessionId');
+            $sessionId = (string) Str::uuid();
+            session(['cart_session_id' => $sessionId]);
         }
+        Log::info(['sessionId' => $sessionId]);
 
-        // Return null or handle gracefully if something went wrong
-        return null;
+        return Cart::with('items')->firstOrCreate(['session_id' => $sessionId]);
     }
 
-    public function addItem($product, int $quantity = 1): void
+    public function addItem($product, int $quantity = 1, ?int $variant_id = null): void
     {
         $cart = $this->getCart();
 
-        $item = $cart->items()->where('product_id', $product->id)->first();
+        $item = $cart->items()->where('product_id', $product->id)
+            ->where('variant_id', $variant_id)
+            ->first();
 
         if ($item) {
             $item->increment('quantity', $quantity);
         } else {
             $cart->items()->create([
                 'product_id' => $product->id,
+                'variant_id' => $variant_id,
                 'quantity' => $quantity,
-                'price' => $product->price, // snapshot price
+                'price' => $product->discount_price ?? $product->price
             ]);
         }
         $cart->touch();
     }
 
-    public function removeItem(int $itemId): void
+    public function removeItem(int $itemId, ?int $variant_id = null): void
     {
         $cart = $this->getCart();
-        $cart->items()->where('id', $itemId)->delete();
+        $cart->items()->where('id', $itemId)->where('variant_id', $variant_id)->delete();
         $cart->touch();
     }
 
@@ -90,7 +73,7 @@ class CartService
         $userCart = Cart::firstOrCreate(['user_id' => $user->id]);
 
         foreach ($guestCart->items as $item) {
-            $existing = $userCart->items()->where('product_id', $item->product_id)->first();
+            $existing = $userCart->items()->where('product_id', $item->product_id)->where('variant_id', $item->variant_id)->first();
             if ($existing) {
                 $existing->increment('quantity', $item->quantity);
             } else {
